@@ -10,6 +10,9 @@
 .svn/
 migrate_working_dir/
 
+# app constants
+./lib/constants.dart
+
 # IntelliJ related
 *.iml
 *.ipr

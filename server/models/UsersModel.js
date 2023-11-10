@@ -21,7 +21,7 @@ const userSchema = new Schema(
       minlength: 5,
     },
     role: {
-      type: Number,
+      type: String,
       required: [true, "Please select a role."],
     },
   },
