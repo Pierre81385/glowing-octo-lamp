@@ -35,7 +35,7 @@ router.route("/create").post(async (req, res) => {
 //login user
 router.route("/login").post(async (req, res) => {
   const user = req.body;
-  await User.findOne({ name: user.name }).then((u) => {
+  await User.findOne({ email: user.email }).then((u) => {
     if (!u) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -43,7 +43,7 @@ router.route("/login").post(async (req, res) => {
       if (match) {
         const payload = {
           id: u._id,
-          name: u.name,
+          name: u.email,
         };
         jwt.sign(
           payload,

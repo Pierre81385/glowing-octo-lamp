@@ -12,7 +12,7 @@ class CreateUserComponent extends StatefulWidget {
 }
 
 class _CreateUserComponentState extends State<CreateUserComponent> {
-  final _CreateUserFormKey = GlobalKey<FormState>();
+  final _createUserFormKey = GlobalKey<FormState>();
   final _firstNameTextController = TextEditingController();
   final _firstNameFocusNode = FocusNode();
   final _lastNameTextController = TextEditingController();
@@ -25,8 +25,8 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   final _confirmPasswordFocusNode = FocusNode();
   final _roleFocusNode = FocusNode();
   bool _isProcessing = false;
-  bool _success = false;
   bool _error = false;
+  String _message = "";
   Map<String, dynamic> _response = {};
   String _selectedRole = "Training";
 
@@ -34,41 +34,50 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
       String password, String role) async {
     String name = "$firstName $lastName";
 
-    var response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/users/create'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          'name': name,
-          'email': email,
-          'password': password,
-          'role': role
-        }));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        _isProcessing = false;
-        _success = true;
-        _response = json.decode(response.body);
+    try {
+      await http
+          .post(
+              Uri.parse(
+                  '${ApiConstants.baseUrl}${ApiConstants.port}/users/create'),
+              headers: {"Content-Type": "application/json"},
+              body: jsonEncode({
+                'name': name,
+                'email': email,
+                'password': password,
+                'role': role
+              }))
+          .then((response) {
+        if (response.statusCode == 200) {
+          setState(() {
+            _isProcessing = false;
+            _response = json.decode(response.body);
+          });
+        } else {
+          setState(() {
+            _isProcessing = false;
+            _error = true;
+            _response = json.decode(response.body);
+          });
+          throw Exception('Failed to create new user.');
+        }
       });
-    } else {
+    } on Exception catch (e) {
       setState(() {
         _isProcessing = false;
-        _success = true;
         _error = true;
-        _response = json.decode(response.body);
+        _message = e.toString();
       });
-      throw Exception('Failed to create new user.');
     }
   }
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
-      DropdownMenuItem(child: Text("Training"), value: "Training"),
-      DropdownMenuItem(child: Text("BarBack"), value: "BarBack"),
-      DropdownMenuItem(child: Text("Expedite"), value: "Expedite"),
-      DropdownMenuItem(child: Text("Bartender"), value: "Bartender"),
-      DropdownMenuItem(child: Text("Server"), value: "Server"),
-      DropdownMenuItem(child: Text("Manager"), value: "Manager"),
+      const DropdownMenuItem(value: "Training", child: Text("Training")),
+      const DropdownMenuItem(value: "BarBack", child: Text("BarBack")),
+      const DropdownMenuItem(value: "Expedite", child: Text("Expedite")),
+      const DropdownMenuItem(value: "Bartender", child: Text("Bartender")),
+      const DropdownMenuItem(value: "Server", child: Text("Server")),
+      const DropdownMenuItem(value: "Manager", child: Text("Manager")),
     ];
     return menuItems;
   }
@@ -77,151 +86,189 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: !_success
-            ? GestureDetector(
-                onTap: () {
-                  _firstNameFocusNode.unfocus();
-                  _lastNameFocusNode.unfocus();
-                  _emailFocusNode.unfocus();
-                  _passwordFocusNode.unfocus();
-                  _confirmPasswordFocusNode.unfocus();
-                  _roleFocusNode.unfocus();
-                },
-                child: Form(
-                  key: _CreateUserFormKey,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _firstNameTextController,
-                        focusNode: _firstNameFocusNode,
-                        validator: (value) => Validator.validateName(
-                          name: value,
-                        ),
-                        style: TextStyle(),
-                        decoration: InputDecoration(
-                          labelText: "First Name",
-                          labelStyle: TextStyle(),
-                        ),
+          child: !_error
+              ? GestureDetector(
+                  onTap: () {
+                    _firstNameFocusNode.unfocus();
+                    _lastNameFocusNode.unfocus();
+                    _emailFocusNode.unfocus();
+                    _passwordFocusNode.unfocus();
+                    _confirmPasswordFocusNode.unfocus();
+                    _roleFocusNode.unfocus();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Form(
+                      key: _createUserFormKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('REGISTER'),
+                          TextFormField(
+                            autocorrect: false,
+                            controller: _firstNameTextController,
+                            focusNode: _firstNameFocusNode,
+                            validator: (value) => Validator.validateName(
+                              name: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              labelText: "First Name",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                          TextFormField(
+                            autocorrect: false,
+                            controller: _lastNameTextController,
+                            focusNode: _lastNameFocusNode,
+                            validator: (value) => Validator.validateName(
+                              name: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              labelText: "Last Name",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                          TextFormField(
+                            autocorrect: false,
+                            controller: _emailTextController,
+                            focusNode: _emailFocusNode,
+                            validator: (value) => Validator.validateEmail(
+                              email: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              labelText: "Email",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                          TextFormField(
+                            autocorrect: false,
+                            controller: _passwordTextController,
+                            focusNode: _passwordFocusNode,
+                            validator: (value) => Validator.validatePassword(
+                              password: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              labelText: "Password",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                          TextFormField(
+                            autocorrect: false,
+                            controller: _confirmPasswordTextController,
+                            focusNode: _confirmPasswordFocusNode,
+                            validator: (value) => Validator.validatePassword(
+                              password: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              labelText: "Confirm Password",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                          DropdownButtonFormField(
+                            value: _selectedRole,
+                            items: dropdownItems,
+                            focusNode: _roleFocusNode,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedRole = value!;
+                              });
+                            },
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      'Back',
+                                      style: TextStyle(color: Colors.black),
+                                    )),
+                              ),
+                              _isProcessing
+                                  ? const CircularProgressIndicator()
+                                  : Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: OutlinedButton(
+                                          onPressed: () async {
+                                            _firstNameFocusNode.unfocus();
+                                            _lastNameFocusNode.unfocus();
+                                            _emailFocusNode.unfocus();
+                                            _passwordFocusNode.unfocus();
+                                            _confirmPasswordFocusNode.unfocus();
+                                            _roleFocusNode.unfocus();
+                                            if (_createUserFormKey.currentState!
+                                                .validate()) {
+                                              setState(() {
+                                                _isProcessing = true;
+                                              });
+                                              await createUser(
+                                                  _firstNameTextController.text,
+                                                  _lastNameTextController.text,
+                                                  _emailTextController.text,
+                                                  _passwordTextController.text,
+                                                  _selectedRole);
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Submit',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          )),
+                                    ),
+                            ],
+                          )
+                        ],
                       ),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _lastNameTextController,
-                        focusNode: _lastNameFocusNode,
-                        validator: (value) => Validator.validateName(
-                          name: value,
-                        ),
-                        style: TextStyle(),
-                        decoration: InputDecoration(
-                          labelText: "Last Name",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _emailTextController,
-                        focusNode: _emailFocusNode,
-                        validator: (value) => Validator.validateEmail(
-                          email: value,
-                        ),
-                        style: TextStyle(),
-                        decoration: InputDecoration(
-                          labelText: "Email",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _passwordTextController,
-                        focusNode: _passwordFocusNode,
-                        validator: (value) => Validator.validatePassword(
-                          password: value,
-                        ),
-                        style: TextStyle(),
-                        decoration: InputDecoration(
-                          labelText: "Password",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _confirmPasswordTextController,
-                        focusNode: _confirmPasswordFocusNode,
-                        validator: (value) => Validator.validatePassword(
-                          password: value,
-                        ),
-                        style: TextStyle(),
-                        decoration: InputDecoration(
-                          labelText: "Confirm Password",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      DropdownButtonFormField(
-                        value: _selectedRole,
-                        items: dropdownItems,
-                        focusNode: _roleFocusNode,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedRole = value!;
-                          });
-                        },
-                      ),
-                      _isProcessing
-                          ? CircularProgressIndicator()
-                          : OutlinedButton(
-                              onPressed: () async {
-                                _firstNameFocusNode.unfocus();
-                                _lastNameFocusNode.unfocus();
-                                _emailFocusNode.unfocus();
-                                _passwordFocusNode.unfocus();
-                                _confirmPasswordFocusNode.unfocus();
-                                _roleFocusNode.unfocus();
-                                if (_CreateUserFormKey.currentState!
-                                    .validate()) {
-                                  setState(() {
-                                    _isProcessing = true;
-                                  });
-                                  await createUser(
-                                      _firstNameTextController.text,
-                                      _lastNameTextController.text,
-                                      _emailTextController.text,
-                                      _passwordTextController.text,
-                                      _selectedRole);
-                                }
-                              },
-                              child: Text('Submit'))
-                    ],
+                    ),
                   ),
-                ),
-              )
-            : Column(
-                children: [
-                  _error
-                      ? Text(_response['message'])
-                      : Column(
-                          children: [
-                            Text(_response.toString()),
-                            Text('SUCCESS')
-                          ],
+                )
+              : !_error
+                  ? Column(
+                      children: [
+                        Text(_response.toString()),
+                        const Text('SUCCESS'),
+                        OutlinedButton(
+                            onPressed: () {
+                              setState(() {
+                                _error = false;
+                                _firstNameTextController.text = "";
+                                _lastNameTextController.text = "";
+                                _emailTextController.text = "";
+                                _passwordTextController.text = "";
+                                _confirmPasswordTextController.text = "";
+                                _selectedRole = "Training";
+                                _response = {};
+                              });
+                            },
+                            child: const Text('Ok'))
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Text(
+                          _message,
+                          style: TextStyle(color: Colors.white),
                         ),
-                  OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          _success = false;
-                          _error = false;
-                          _firstNameTextController.text = "";
-                          _lastNameTextController.text = "";
-                          _emailTextController.text = "";
-                          _passwordTextController.text = "";
-                          _confirmPasswordTextController.text = "";
-                          _selectedRole = "Training";
-                          _response = {};
-                        });
-                      },
-                      child: Text('Ok'))
-                ],
-              ),
-      ),
+                        Text(
+                          _response.toString(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Back'))
+                      ],
+                    )),
     );
   }
 }
