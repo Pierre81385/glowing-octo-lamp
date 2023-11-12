@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:glowing_octo_lamp/user_components/login.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../validate.dart';
@@ -52,6 +53,10 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
             _isProcessing = false;
             _response = json.decode(response.body);
           });
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const LoginComponent(
+                    message: 'Success! You can now login!',
+                  )));
         } else {
           setState(() {
             _isProcessing = false;
@@ -103,7 +108,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('REGISTER'),
+                          const Text('REGISTER'),
                           TextFormField(
                             autocorrect: false,
                             controller: _firstNameTextController,
@@ -188,7 +193,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       'Back',
                                       style: TextStyle(color: Colors.black),
                                     )),
@@ -256,11 +261,11 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                       children: [
                         Text(
                           _message,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         Text(
                           _response.toString(),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         OutlinedButton(
                             onPressed: () {

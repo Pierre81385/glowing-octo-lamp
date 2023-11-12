@@ -36,7 +36,9 @@ class Home extends StatelessWidget {
                 child: OutlinedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const LoginComponent()));
+                          builder: (context) => const LoginComponent(
+                                message: "LOGIN",
+                              )));
                     },
                     child: const Text(
                       'Login',

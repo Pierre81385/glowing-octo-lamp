@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:glowing_octo_lamp/home.dart';
 import 'package:glowing_octo_lamp/user_components/get_user.dart';
+import 'package:glowing_octo_lamp/user_components/user_menu.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../constants.dart';
 import '../validate.dart';
 
 class LoginComponent extends StatefulWidget {
-  const LoginComponent({super.key});
+  const LoginComponent({super.key, required this.message});
+  final String message;
 
   @override
   State<LoginComponent> createState() => _LoginComponentState();
@@ -21,7 +24,7 @@ class _LoginComponentState extends State<LoginComponent> {
   bool _isProcessing = false;
   bool _error = false;
   Map<String, dynamic> _response = {};
-  String _message = "";
+  String _message = "LOGIN";
 
   Login(String email, String password) async {
     try {
@@ -42,9 +45,11 @@ class _LoginComponentState extends State<LoginComponent> {
             _passwordLoginTextController.text = "";
             _response = json.decode(response.body);
           });
+          // Navigator.of(context).push(MaterialPageRoute(
+          //     builder: (context) => GetUserComponent(
+          //         jwt: _response['jwt'], id: _response['user']['_id'])));
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => GetUserComponent(
-                  jwt: _response['jwt'], id: _response['user']['_id'])));
+              builder: (context) => UserMenuComponent(response: _response)));
         } else {
           setState(() {
             _isProcessing = false;
@@ -62,6 +67,12 @@ class _LoginComponentState extends State<LoginComponent> {
         _message = e.toString();
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _message = widget.message;
   }
 
   @override
@@ -106,11 +117,11 @@ class _LoginComponentState extends State<LoginComponent> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            'LOGIN',
-                            style: TextStyle(color: Colors.black),
+                            _message,
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
                         TextFormField(
@@ -153,7 +164,10 @@ class _LoginComponentState extends State<LoginComponent> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: OutlinedButton(
                                           onPressed: () {
-                                            Navigator.of(context).pop();
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const Home()));
                                           },
                                           child: const Text(
                                             'Back',

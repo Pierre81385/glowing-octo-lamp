@@ -1,43 +1,49 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/constants.dart';
 import 'package:http/http.dart' as http;
+import '../models/user_model.dart';
 
-class GetUserComponent extends StatefulWidget {
-  const GetUserComponent({super.key, required this.jwt, required this.id});
+class GetAllUsersComponent extends StatefulWidget {
+  const GetAllUsersComponent({super.key, required this.jwt, required this.id});
   final String jwt;
   final String id;
 
   @override
-  State<GetUserComponent> createState() => _GetUserComponentState();
+  State<GetAllUsersComponent> createState() => _GetAllUsersComponentState();
 }
 
-class _GetUserComponentState extends State<GetUserComponent> {
+class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   late String _jwt;
   late String _id;
   bool _isProcessing = true;
   bool _error = false;
   String _message = "";
-  Map<String, dynamic> _response = {};
+  List<User> _response = [];
 
-  Future<void> getUserById(String id, String token) async {
+  Future<void> getAllUsers(String token) async {
     try {
       await http.get(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/users/$id'),
+        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/users/'),
         headers: {"Authorization": token, "Content-Type": "application/json"},
       ).then((response) {
+        final parsed =
+            (jsonDecode(response.body) as List).cast<Map<String, dynamic>>();
         if (response.statusCode == 200) {
           setState(() {
             _isProcessing = false;
-            _response = json.decode(response.body);
+            _response =
+                parsed.map<User>((json) => User.fromJson(json)).toList();
           });
         } else {
           setState(() {
             _isProcessing = false;
             _error = true;
-            _response = json.decode(response.body);
+            _response =
+                parsed.map<User>((json) => User.fromJson(json)).toList();
           });
-          throw Exception('Failed to get new user.');
+          throw Exception('Failed to get all users.');
         }
       });
     } on Exception catch (e) {
@@ -53,7 +59,7 @@ class _GetUserComponentState extends State<GetUserComponent> {
   void initState() {
     _jwt = widget.jwt;
     _id = widget.id;
-    getUserById(_id, _jwt);
+    getAllUsers(_jwt);
     super.initState();
   }
 
@@ -66,16 +72,28 @@ class _GetUserComponentState extends State<GetUserComponent> {
             : !_error
                 ? Column(
                     children: [
-                      Column(
-                        children: [
-                          Text('${_response['role']} ${_response['name']}'),
-                          Text(_response['email']),
-                          OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Back'))
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Back')),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _response.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              User user = _response[index];
+                              return user.id == _id
+                                  ? SizedBox()
+                                  : ListTile(
+                                      isThreeLine: true,
+                                      title: Text(user.name),
+                                      subtitle: Text(user.role),
+                                    );
+                            }),
                       ),
                     ],
                   )
