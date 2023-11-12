@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../constants.dart';
 import '../validate.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class LoginComponent extends StatefulWidget {
   const LoginComponent({super.key, required this.message});
@@ -16,6 +17,10 @@ class LoginComponent extends StatefulWidget {
 }
 
 class _LoginComponentState extends State<LoginComponent> {
+  IO.Socket socket = IO.io('http://localhost:4200', <String, dynamic>{
+    'transports': ['websocket'],
+    'autoConnect': false,
+  });
   final _loginFormKey = GlobalKey<FormState>();
   final _emailLoginTextController = TextEditingController();
   final _emailLoginFocusNode = FocusNode();
@@ -25,6 +30,17 @@ class _LoginComponentState extends State<LoginComponent> {
   bool _error = false;
   Map<String, dynamic> _response = {};
   String _message = "LOGIN";
+
+  @override
+  void initState() {
+    super.initState();
+    connectToServer();
+    _message = widget.message;
+  }
+
+  void connectToServer() {
+    socket.connect();
+  }
 
   Login(String email, String password) async {
     try {
@@ -45,9 +61,7 @@ class _LoginComponentState extends State<LoginComponent> {
             _passwordLoginTextController.text = "";
             _response = json.decode(response.body);
           });
-          // Navigator.of(context).push(MaterialPageRoute(
-          //     builder: (context) => GetUserComponent(
-          //         jwt: _response['jwt'], id: _response['user']['_id'])));
+          socket.emit('login', _response);
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => UserMenuComponent(response: _response)));
         } else {
@@ -70,38 +84,36 @@ class _LoginComponentState extends State<LoginComponent> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _message = widget.message;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: _error
           ? SafeArea(
-              child: Column(
-                children: [
-                  Text(
-                    _message,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                  Text(
-                    _response.toString(),
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                  OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          _emailLoginTextController.text = "";
-                          _passwordLoginTextController.text = "";
-                          _error = false;
-                          _response = {};
-                        });
-                      },
-                      child: const Text('Back'))
-                ],
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _message,
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    Text(
+                      _response.toString(),
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            _emailLoginTextController.text = "";
+                            _passwordLoginTextController.text = "";
+                            _error = false;
+                            _response = {};
+                          });
+                        },
+                        child: const Text('Back'))
+                  ],
+                ),
               ),
             )
           : GestureDetector(
