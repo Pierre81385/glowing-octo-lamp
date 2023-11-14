@@ -3,22 +3,22 @@ const User = require("../models/UsersModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authenticateToken = require("../utils/jwtVerify");
-const { response } = require("express");
 
 //create new user
 router.route("/create").post(async (req, res) => {
   const user = req.body;
-  const nameTaken = await User.findOne({ name: user.name });
+  //const nameTaken = await User.findOne({ name: user.name }); removing since it's possible to have two people w/ same name.
   const emailTaken = await User.findOne({ email: user.email });
 
-  if (nameTaken || emailTaken) {
+  if (emailTaken) {
     res
       .status(409)
-      .json({ message: "CONFLICT, name or email address already in use." });
+      .json({ message: "CONFLICT, email address already in use." });
   } else {
     user.password = await bcrypt.hash(req.body.password, 10);
     const newUser = new User({
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       password: user.password,
       role: user.role,
@@ -39,6 +39,7 @@ router.route("/login").post(async (req, res) => {
     if (!u) {
       return res.status(404).json({ message: "User not found" });
     }
+
     bcrypt.compare(user.password, u.password).then((match) => {
       if (match) {
         const payload = {
@@ -63,7 +64,7 @@ router.route("/login").post(async (req, res) => {
         );
       } else {
         return res.status(409).json({
-          message: "name or password is incorrect.",
+          message: "email or password is incorrect.",
         });
       }
     });
@@ -85,28 +86,46 @@ router.route("/:id").get(authenticateToken, (req, res) => {
 });
 
 //update
-router.route("/:name").put(authenticateToken, async (req, res) => {
-  console.log(req);
-  await User.findOneAndUpdate(
-    { name: req.params.name },
+router.route("/:id").put(authenticateToken, async (req, res) => {
+  const user = req.body;
+  //const nameTaken = await User.findOne({ name: user.name });
+  //const emailTaken = await User.findOne({ email: user.email });
+
+  // if (emailTaken) {
+  //   res
+  //     .status(409)
+  //     .json({ message: "CONFLICT, email address already in use." });
+  // } else {
+  user.password = await bcrypt.hash(req.body.password, 10);
+  const newUser = new User({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    password: user.password,
+    role: user.role,
+  });
+  await User.findByIdAndUpdate(
+    { _id: req.params.id },
     {
       $set: {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        role: req.body.role,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        password: newUser.password,
+        role: newUser.role,
       },
     },
     {
       new: true,
     }
   )
-    .then((data) => {
-      res.status(200).json({ message: "Success!" });
+    .then(() => {
+      res.status(200).json("Success!");
     })
     .catch((err) => {
       res.status(400).json("Error: " + err);
     });
+  //}
 });
 
 //delete

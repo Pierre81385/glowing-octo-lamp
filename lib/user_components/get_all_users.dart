@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/constants.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
+import './delete_user.dart';
 
 class GetAllUsersComponent extends StatefulWidget {
   const GetAllUsersComponent({super.key, required this.jwt, required this.id});
@@ -90,8 +90,11 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                                   ? SizedBox()
                                   : ListTile(
                                       isThreeLine: true,
-                                      title: Text(user.name),
+                                      title: Text(
+                                          '${user.firstName} ${user.lastName}'),
                                       subtitle: Text(user.role),
+                                      trailing: DeleteUserComponent(
+                                          id: _id, jwt: _jwt),
                                     );
                             }),
                       ),

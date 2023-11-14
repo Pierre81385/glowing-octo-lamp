@@ -33,8 +33,6 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
 
   Future<void> createUser(String firstName, String lastName, String email,
       String password, String role) async {
-    String name = "$firstName $lastName";
-
     try {
       await http
           .post(
@@ -42,7 +40,8 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                   '${ApiConstants.baseUrl}${ApiConstants.port}/users/create'),
               headers: {"Content-Type": "application/json"},
               body: jsonEncode({
-                'name': name,
+                'firstName': firstName,
+                'lastName': lastName,
                 'email': email,
                 'password': password,
                 'role': role

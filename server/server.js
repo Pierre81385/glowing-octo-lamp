@@ -34,27 +34,15 @@ connection.once("open", () => {
   console.log("MongoDB database connection established successfully");
 });
 
-const online = [];
 // Socket.IO setup
 io.on("connection", (socket) => {
   console.log("a user connected");
 
   //notify of user login
-  //   socket.on("Login", function (data) {
-  //     console.log("a user logged on");
-  //     online.push(data.username);
-  //     io.emit("Notify_Login", online);
-  //   });
-
-  //   //notify of user logout
-  //   socket.on("Logout", function (data) {
-  //     console.log("a user logged off");
-  //     const index = online.indexOf(data.username);
-  //     if (index > -1) {
-  //       online.splice(index, 1);
-  //     }
-  //     io.emit("Notify_Logout", online);
-  //   });
+  socket.on("login", function (data) {
+    console.log(`${data["user"]["firstName"]} logged on.`);
+    io.emit("notify_login", data);
+  });
 
   socket.on("disconnect", (data) => {
     console.log("user disconnected");

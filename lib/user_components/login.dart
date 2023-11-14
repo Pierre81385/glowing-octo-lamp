@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/home.dart';
-import 'package:glowing_octo_lamp/user_components/get_user.dart';
 import 'package:glowing_octo_lamp/user_components/user_menu.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../constants.dart';
+import '../models/user_model.dart';
 import '../validate.dart';
+import '../constants.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class LoginComponent extends StatefulWidget {
@@ -17,7 +18,8 @@ class LoginComponent extends StatefulWidget {
 }
 
 class _LoginComponentState extends State<LoginComponent> {
-  IO.Socket socket = IO.io('http://localhost:4200', <String, dynamic>{
+  IO.Socket socket =
+      IO.io('${ApiConstants.baseUrl}${ApiConstants.port}', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -63,7 +65,10 @@ class _LoginComponentState extends State<LoginComponent> {
           });
           socket.emit('login', _response);
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => UserMenuComponent(response: _response)));
+              builder: (context) => UserMenuComponent(
+                    user: User.fromJson(_response['user']),
+                    jwt: _response['jwt'],
+                  )));
         } else {
           setState(() {
             _isProcessing = false;
