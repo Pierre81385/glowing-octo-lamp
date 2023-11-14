@@ -21,7 +21,7 @@ router.route("/create").post(async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       password: user.password,
-      role: user.role,
+      type: user.type,
     });
     newUser
       .save()
@@ -102,7 +102,7 @@ router.route("/:id").put(authenticateToken, async (req, res) => {
     lastName: user.lastName,
     email: user.email,
     password: user.password,
-    role: user.role,
+    type: user.type,
   });
   await User.findByIdAndUpdate(
     { _id: req.params.id },
@@ -112,7 +112,7 @@ router.route("/:id").put(authenticateToken, async (req, res) => {
         lastName: newUser.lastName,
         email: newUser.email,
         password: newUser.password,
-        role: newUser.role,
+        type: newUser.type,
       },
     },
     {

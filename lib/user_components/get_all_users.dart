@@ -92,7 +92,7 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                                       isThreeLine: true,
                                       title: Text(
                                           '${user.firstName} ${user.lastName}'),
-                                      subtitle: Text(user.role),
+                                      subtitle: Text(user.type),
                                       trailing: DeleteUserComponent(
                                           id: _id, jwt: _jwt),
                                     );

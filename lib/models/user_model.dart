@@ -4,7 +4,7 @@ class User {
   late String lastName;
   late String email;
   late String password;
-  late String role;
+  late String type;
 
   User(
       {required this.id,
@@ -12,7 +12,7 @@ class User {
       required this.lastName,
       required this.email,
       required this.password,
-      required this.role});
+      required this.type});
 
   factory User.fromJson(Map<String, dynamic> user) {
     return User(
@@ -21,6 +21,6 @@ class User {
         lastName: user["lastName"],
         email: user["email"],
         password: user["password"],
-        role: user["role"]);
+        type: user["type"]);
   }
 }

@@ -76,9 +76,9 @@ class _GetUserComponentState extends State<GetUserComponent> {
                       children: [
                         Column(
                           children: [
-                            Text(
-                                '${_user.role} ${_user.firstName} ${_user.lastName}'),
+                            Text('${_user.firstName} ${_user.lastName}'),
                             Text(_user.email),
+                            Text('Permission level: ${_user.type}'),
                             OutlinedButton(
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
@@ -86,13 +86,17 @@ class _GetUserComponentState extends State<GetUserComponent> {
                                           user: _user, jwt: _jwt)));
                                 },
                                 child: const Text('Back')),
-                            OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => UpdateUserComponent(
-                                          user: _user, jwt: _jwt)));
-                                },
-                                child: const Text('Update'))
+                            _user.type == "Limited"
+                                ? const SizedBox()
+                                : OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UpdateUserComponent(
+                                                      user: _user, jwt: _jwt)));
+                                    },
+                                    child: const Text('Update'))
                           ],
                         ),
                       ],

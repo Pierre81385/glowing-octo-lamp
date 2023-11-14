@@ -28,7 +28,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordTextController = TextEditingController();
   final _confirmPasswordFocusNode = FocusNode();
-  final _roleFocusNode = FocusNode();
+  final _typeFocusNode = FocusNode();
   late User _user;
   late String _jwt;
   bool _isProcessing = false;
@@ -45,7 +45,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
   }
 
   Future<void> updateUser(String id, String firstName, String lastName,
-      String email, String password, String role, String token) async {
+      String email, String password, String type, String token) async {
     try {
       print('${ApiConstants.baseUrl}${ApiConstants.port}/users/${_user.id}');
 
@@ -62,7 +62,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                 'lastName': lastName,
                 'email': email,
                 'password': password,
-                'role': role
+                'type': type
               }))
           .then((response) {
         print(response.statusCode);
@@ -92,12 +92,24 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
-      const DropdownMenuItem(value: "Training", child: Text("Training")),
-      const DropdownMenuItem(value: "BarBack", child: Text("BarBack")),
-      const DropdownMenuItem(value: "Expedite", child: Text("Expedite")),
-      const DropdownMenuItem(value: "Bartender", child: Text("Bartender")),
-      const DropdownMenuItem(value: "Server", child: Text("Server")),
-      const DropdownMenuItem(value: "Manager", child: Text("Manager")),
+      const DropdownMenuItem(
+          value: "Admin",
+          child: Text(
+            "Admin",
+            style: TextStyle(color: Colors.black),
+          )),
+      const DropdownMenuItem(
+          value: "General",
+          child: Text(
+            "General",
+            style: TextStyle(color: Colors.black),
+          )),
+      const DropdownMenuItem(
+          value: "Limited",
+          child: Text(
+            "Limited",
+            style: TextStyle(color: Colors.black),
+          )),
     ];
     return menuItems;
   }
@@ -114,7 +126,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                     _emailFocusNode.unfocus();
                     _passwordFocusNode.unfocus();
                     _confirmPasswordFocusNode.unfocus();
-                    _roleFocusNode.unfocus();
+                    _typeFocusNode.unfocus();
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -210,12 +222,12 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                             ),
                           ),
                           DropdownButtonFormField(
-                            value: _user.role,
+                            value: _user.type,
                             items: dropdownItems,
-                            focusNode: _roleFocusNode,
+                            focusNode: _typeFocusNode,
                             onChanged: (value) {
                               setState(() {
-                                _user.role = value!;
+                                _user.type = value!;
                               });
                             },
                           ),
@@ -244,14 +256,9 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                                             _emailFocusNode.unfocus();
                                             _passwordFocusNode.unfocus();
                                             _confirmPasswordFocusNode.unfocus();
-                                            _roleFocusNode.unfocus();
+                                            _typeFocusNode.unfocus();
                                             if (_createUserFormKey.currentState!
                                                 .validate()) {
-                                              print(_user.firstName);
-                                              print(_user.lastName);
-                                              print(_user.email);
-                                              print(_user.password);
-                                              print(_user.role);
                                               setState(() {
                                                 _isProcessing = true;
                                               });
@@ -261,7 +268,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                                                   _user.lastName,
                                                   _user.email,
                                                   _passwordTextController.text,
-                                                  _user.role,
+                                                  _user.type,
                                                   _jwt);
                                             }
                                           },

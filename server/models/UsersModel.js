@@ -26,9 +26,9 @@ const userSchema = new Schema(
       required: [true, "Your password is required"],
       minlength: 5,
     },
-    role: {
+    type: {
       type: String,
-      required: [true, "Please select a role."],
+      required: [true, "Please select a type."],
     },
   },
   { timestamps: true }

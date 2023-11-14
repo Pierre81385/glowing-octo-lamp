@@ -24,15 +24,15 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordTextController = TextEditingController();
   final _confirmPasswordFocusNode = FocusNode();
-  final _roleFocusNode = FocusNode();
+  final _typeFocusNode = FocusNode();
   bool _isProcessing = false;
   bool _error = false;
   String _message = "";
   Map<String, dynamic> _response = {};
-  String _selectedRole = "Training";
+  String _selectedtype = "General";
 
   Future<void> createUser(String firstName, String lastName, String email,
-      String password, String role) async {
+      String password, String type) async {
     try {
       await http
           .post(
@@ -44,7 +44,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                 'lastName': lastName,
                 'email': email,
                 'password': password,
-                'role': role
+                'type': type
               }))
           .then((response) {
         if (response.statusCode == 200) {
@@ -76,12 +76,24 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
-      const DropdownMenuItem(value: "Training", child: Text("Training")),
-      const DropdownMenuItem(value: "BarBack", child: Text("BarBack")),
-      const DropdownMenuItem(value: "Expedite", child: Text("Expedite")),
-      const DropdownMenuItem(value: "Bartender", child: Text("Bartender")),
-      const DropdownMenuItem(value: "Server", child: Text("Server")),
-      const DropdownMenuItem(value: "Manager", child: Text("Manager")),
+      const DropdownMenuItem(
+          value: "Admin",
+          child: Text(
+            "Admin",
+            style: TextStyle(color: Colors.black),
+          )),
+      const DropdownMenuItem(
+          value: "General",
+          child: Text(
+            "General",
+            style: TextStyle(color: Colors.black),
+          )),
+      const DropdownMenuItem(
+          value: "Limited",
+          child: Text(
+            "Limited",
+            style: TextStyle(color: Colors.black),
+          )),
     ];
     return menuItems;
   }
@@ -98,7 +110,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                     _emailFocusNode.unfocus();
                     _passwordFocusNode.unfocus();
                     _confirmPasswordFocusNode.unfocus();
-                    _roleFocusNode.unfocus();
+                    _typeFocusNode.unfocus();
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -174,12 +186,17 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                             ),
                           ),
                           DropdownButtonFormField(
-                            value: _selectedRole,
+                            value: _selectedtype,
                             items: dropdownItems,
-                            focusNode: _roleFocusNode,
+                            focusNode: _typeFocusNode,
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              labelText: "Permission Level",
+                              labelStyle: TextStyle(),
+                            ),
                             onChanged: (value) {
                               setState(() {
-                                _selectedRole = value!;
+                                _selectedtype = value!;
                               });
                             },
                           ),
@@ -208,7 +225,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                                             _emailFocusNode.unfocus();
                                             _passwordFocusNode.unfocus();
                                             _confirmPasswordFocusNode.unfocus();
-                                            _roleFocusNode.unfocus();
+                                            _typeFocusNode.unfocus();
                                             if (_createUserFormKey.currentState!
                                                 .validate()) {
                                               setState(() {
@@ -219,7 +236,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                                                   _lastNameTextController.text,
                                                   _emailTextController.text,
                                                   _passwordTextController.text,
-                                                  _selectedRole);
+                                                  _selectedtype);
                                             }
                                           },
                                           child: const Text(
@@ -249,7 +266,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                                 _emailTextController.text = "";
                                 _passwordTextController.text = "";
                                 _confirmPasswordTextController.text = "";
-                                _selectedRole = "Training";
+                                _selectedtype = "Training";
                                 _response = {};
                               });
                             },

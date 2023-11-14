@@ -60,7 +60,7 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                         lastName: 'logout',
                         email: 'logout',
                         password: 'logout',
-                        role: 'logout');
+                        type: 'logout');
                   });
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
