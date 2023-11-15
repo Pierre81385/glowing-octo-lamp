@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glowing_octo_lamp/product_components/get_all_products.dart';
 import 'package:glowing_octo_lamp/user_components/get_all_users.dart';
 import 'package:glowing_octo_lamp/user_components/get_user.dart';
 import 'package:glowing_octo_lamp/user_components/login.dart';
@@ -49,7 +50,14 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                       builder: (context) =>
                           GetAllUsersComponent(jwt: _jwt, id: _user.id)));
                 },
-                child: Text('Get All Users')),
+                child: Text('All Users')),
+            OutlinedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          GetAllProductsComponent(user: _user, jwt: _jwt)));
+                },
+                child: Text('Manage Product')),
             OutlinedButton(
                 onPressed: () {
                   setState(() {

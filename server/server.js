@@ -21,8 +21,10 @@ const io = socketIo(server, {
 }); // Initialize Socket.IO with the server
 
 const UserRouter = require("./routes/UsersRoutes");
+const ProductRouter = require("./routes/ProductRoutes");
 
 app.use("/users", UserRouter);
+app.use("/products", ProductRouter);
 
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, {
