@@ -2,7 +2,7 @@ class Product {
   final String id;
   late String name;
   late String description;
-  late String price;
+  late double price;
   late int count;
   late String category;
 
@@ -19,7 +19,7 @@ class Product {
         id: product["_id"],
         name: product['name'],
         description: product["description"],
-        price: product["price"],
+        price: product["price"].toDouble(),
         count: product["count"],
         category: product["category"]);
   }

@@ -13,7 +13,7 @@ const productSchema = new Schema({
     required: [true, "Product description is required."],
   },
   price: {
-    type: String,
+    type: Number,
     required: [true, "Product price is required."],
   },
   count: {

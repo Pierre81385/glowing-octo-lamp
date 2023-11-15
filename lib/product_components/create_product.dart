@@ -36,7 +36,7 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
   Map<String, dynamic> _response = {};
   String _selectedtype = "Drink";
 
-  Future<void> createProduct(String name, String description, String price,
+  Future<void> createProduct(String name, String description, double price,
       int count, String category) async {
     try {
       await http
@@ -243,11 +243,16 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
                                               setState(() {
                                                 _isProcessing = true;
                                               });
+                                              double priceDouble =
+                                                  double.tryParse(
+                                                          _priceTextController
+                                                              .text) ??
+                                                      0.0;
                                               await createProduct(
                                                   _nameTextController.text,
                                                   _descriptionTextController
                                                       .text,
-                                                  _priceTextController.text,
+                                                  priceDouble,
                                                   int.parse(_countTextController
                                                       .text),
                                                   _selectedtype);
