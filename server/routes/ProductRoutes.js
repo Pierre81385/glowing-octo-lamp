@@ -46,7 +46,6 @@ router.route("/:id").get((req, res) => {
 //update
 router.route("/:id").put(async (req, res) => {
   const product = req.body;
-  var Double = require("mongodb").Double;
 
   const newProduct = new Product({
     name: product.name,

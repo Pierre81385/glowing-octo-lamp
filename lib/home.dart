@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
+import 'constants.dart';
 import 'user_components/create_user.dart';
 import 'user_components/login.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  late IO.Socket socket;
+
+  void connectToServer() {
+    socket.connect();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    socket =
+        IO.io('${ApiConstants.baseUrl}${ApiConstants.port}', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+    });
+    connectToServer();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +48,9 @@ class Home extends StatelessWidget {
                 child: OutlinedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const CreateUserComponent()));
+                          builder: (context) => CreateUserComponent(
+                                socket: socket,
+                              )));
                     },
                     child: const Text(
                       'Register',
@@ -36,8 +62,9 @@ class Home extends StatelessWidget {
                 child: OutlinedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const LoginComponent(
+                          builder: (context) => LoginComponent(
                                 message: "LOGIN",
+                                socket: socket,
                               )));
                     },
                     child: const Text(

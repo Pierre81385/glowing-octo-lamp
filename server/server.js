@@ -46,6 +46,10 @@ io.on("connection", (socket) => {
     io.emit("notify_login", data);
   });
 
+  socket.on("viewed profile", function () {
+    console.log("user viewed their profile");
+  });
+
   socket.on("disconnect", (data) => {
     console.log("user disconnected");
   });

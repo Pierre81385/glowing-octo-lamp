@@ -6,28 +6,25 @@ import 'dart:convert';
 import '../constants.dart';
 import '../models/user_model.dart';
 import '../validate.dart';
-import '../constants.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class LoginComponent extends StatefulWidget {
-  const LoginComponent({super.key, required this.message});
+  const LoginComponent(
+      {super.key, required this.message, required this.socket});
   final String message;
+  final IO.Socket socket;
 
   @override
   State<LoginComponent> createState() => _LoginComponentState();
 }
 
 class _LoginComponentState extends State<LoginComponent> {
-  IO.Socket socket =
-      IO.io('${ApiConstants.baseUrl}${ApiConstants.port}', <String, dynamic>{
-    'transports': ['websocket'],
-    'autoConnect': false,
-  });
   final _loginFormKey = GlobalKey<FormState>();
   final _emailLoginTextController = TextEditingController();
   final _emailLoginFocusNode = FocusNode();
   final _passwordLoginTextController = TextEditingController();
   final _passwordLoginFocusNode = FocusNode();
+  late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
   Map<String, dynamic> _response = {};
@@ -36,12 +33,8 @@ class _LoginComponentState extends State<LoginComponent> {
   @override
   void initState() {
     super.initState();
-    connectToServer();
+    _socket = widget.socket;
     _message = widget.message;
-  }
-
-  void connectToServer() {
-    socket.connect();
   }
 
   Login(String email, String password) async {
@@ -63,11 +56,12 @@ class _LoginComponentState extends State<LoginComponent> {
             _passwordLoginTextController.text = "";
             _response = json.decode(response.body);
           });
-          socket.emit('login', _response);
+          _socket.emit('login', _response);
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => UserMenuComponent(
                     user: User.fromJson(_response['user']),
                     jwt: _response['jwt'],
+                    socket: _socket,
                   )));
         } else {
           setState(() {

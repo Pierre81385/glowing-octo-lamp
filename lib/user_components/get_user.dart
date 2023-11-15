@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/constants.dart';
 import 'package:glowing_octo_lamp/user_components/update_user.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../models/user_model.dart';
 import 'user_menu.dart';
 
 class GetUserComponent extends StatefulWidget {
-  const GetUserComponent({super.key, required this.jwt, required this.user});
+  const GetUserComponent(
+      {super.key, required this.jwt, required this.user, required this.socket});
   final String jwt;
   final User user;
+  final IO.Socket socket;
 
   @override
   State<GetUserComponent> createState() => _GetUserComponentState();
@@ -19,10 +21,20 @@ class GetUserComponent extends StatefulWidget {
 class _GetUserComponentState extends State<GetUserComponent> {
   late String _jwt;
   late User _user;
+  late IO.Socket _socket;
   bool _isProcessing = true;
   bool _error = false;
   String _message = "";
   Map<String, dynamic> _response = {};
+
+  @override
+  void initState() {
+    _jwt = widget.jwt;
+    _user = widget.user;
+    _socket = widget.socket;
+    getUserById(_user.id, _jwt);
+    super.initState();
+  }
 
   Future<void> getUserById(String id, String token) async {
     try {
@@ -55,19 +67,20 @@ class _GetUserComponentState extends State<GetUserComponent> {
   }
 
   @override
-  void initState() {
-    _jwt = widget.jwt;
-    _user = widget.user;
-    getUserById(_user.id, _jwt);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: _isProcessing
-            ? const CircularProgressIndicator()
+            ? Column(
+                children: [
+                  const CircularProgressIndicator(),
+                  OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Back'))
+                ],
+              )
             : !_error
                 ? SizedBox(
                     width: double.infinity,
@@ -83,7 +96,10 @@ class _GetUserComponentState extends State<GetUserComponent> {
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => UserMenuComponent(
-                                          user: _user, jwt: _jwt)));
+                                            user: _user,
+                                            jwt: _jwt,
+                                            socket: _socket,
+                                          )));
                                 },
                                 child: const Text('Back')),
                             _user.type == "Limited"
@@ -94,7 +110,10 @@ class _GetUserComponentState extends State<GetUserComponent> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   UpdateUserComponent(
-                                                      user: _user, jwt: _jwt)));
+                                                    user: _user,
+                                                    jwt: _jwt,
+                                                    socket: _socket,
+                                                  )));
                                     },
                                     child: const Text('Update'))
                           ],

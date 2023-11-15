@@ -4,11 +4,14 @@ import 'package:glowing_octo_lamp/constants.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import './delete_user.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class GetAllUsersComponent extends StatefulWidget {
-  const GetAllUsersComponent({super.key, required this.jwt, required this.id});
+  const GetAllUsersComponent(
+      {super.key, required this.jwt, required this.id, required this.socket});
   final String jwt;
   final String id;
+  final IO.Socket socket;
 
   @override
   State<GetAllUsersComponent> createState() => _GetAllUsersComponentState();
@@ -17,6 +20,7 @@ class GetAllUsersComponent extends StatefulWidget {
 class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   late String _jwt;
   late String _id;
+  late IO.Socket _socket;
   bool _isProcessing = true;
   bool _error = false;
   String _message = "";
@@ -59,6 +63,7 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   void initState() {
     _jwt = widget.jwt;
     _id = widget.id;
+    _socket = widget.socket;
     getAllUsers(_jwt);
     super.initState();
   }
@@ -94,7 +99,10 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                                           '${user.firstName} ${user.lastName}'),
                                       subtitle: Text(user.type),
                                       trailing: DeleteUserComponent(
-                                          id: _id, jwt: _jwt),
+                                        id: _id,
+                                        jwt: _jwt,
+                                        socket: _socket,
+                                      ),
                                     );
                             }),
                       ),

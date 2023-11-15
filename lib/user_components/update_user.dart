@@ -6,11 +6,14 @@ import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/user_model.dart';
 import '../validate.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class UpdateUserComponent extends StatefulWidget {
-  const UpdateUserComponent({super.key, required this.user, required this.jwt});
+  const UpdateUserComponent(
+      {super.key, required this.user, required this.jwt, required this.socket});
   final User user;
   final String jwt;
+  final IO.Socket socket;
 
   @override
   State<UpdateUserComponent> createState() => _UpdateUserComponentState();
@@ -31,6 +34,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
   final _typeFocusNode = FocusNode();
   late User _user;
   late String _jwt;
+  late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
   String _message = "";
@@ -41,7 +45,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
     super.initState();
     _jwt = widget.jwt;
     _user = widget.user;
-    print(_user);
+    _socket = widget.socket;
   }
 
   Future<void> updateUser(String id, String firstName, String lastName,
@@ -65,14 +69,16 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                 'type': type
               }))
           .then((response) {
-        print(response.statusCode);
-        print(response.reasonPhrase);
         if (response.statusCode == 200) {
           setState(() {
             _isProcessing = false;
           });
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => GetUserComponent(user: _user, jwt: _jwt)));
+              builder: (context) => GetUserComponent(
+                    user: _user,
+                    jwt: _jwt,
+                    socket: _socket,
+                  )));
         } else {
           setState(() {
             _isProcessing = false;
@@ -145,7 +151,9 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                               name: value,
                             ),
                             onChanged: (value) {
-                              _user.firstName = value;
+                              setState(() {
+                                _user.firstName = value;
+                              });
                             },
                             style: const TextStyle(),
                             decoration: const InputDecoration(

@@ -2,17 +2,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/product_components/create_product.dart';
 import 'package:glowing_octo_lamp/product_components/delete_product.dart';
+import 'package:glowing_octo_lamp/product_components/get_product.dart';
 import 'package:glowing_octo_lamp/user_components/user_menu.dart';
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:glowing_octo_lamp/constants.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 
 class GetAllProductsComponent extends StatefulWidget {
   const GetAllProductsComponent(
-      {super.key, required this.user, required this.jwt});
+      {super.key, required this.user, required this.jwt, required this.socket});
   final User user;
   final String jwt;
+  final IO.Socket socket;
 
   @override
   State<GetAllProductsComponent> createState() =>
@@ -22,10 +25,20 @@ class GetAllProductsComponent extends StatefulWidget {
 class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
   late User _user;
   late String _jwt;
+  late IO.Socket _socket;
   bool _isProcessing = true;
   bool _error = false;
   String _message = "";
   List<Product> _response = [];
+
+  @override
+  void initState() {
+    _user = widget.user;
+    _jwt = widget.jwt;
+    _socket = widget.socket;
+    getAllProduct();
+    super.initState();
+  }
 
   Future<void> getAllProduct() async {
     try {
@@ -61,14 +74,6 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
   }
 
   @override
-  void initState() {
-    _user = widget.user;
-    _jwt = widget.jwt;
-    getAllProduct();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -91,6 +96,7 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                                   builder: (context) => CreateProductComponent(
                                         user: _user,
                                         jwt: _jwt,
+                                        socket: _socket,
                                       )));
                             },
                             child: const Text('Add Product processing')),
@@ -108,11 +114,11 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                           children: [
                             OutlinedButton(
                                 onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => UserMenuComponent(
-                                            user: _user,
-                                            jwt: _jwt,
-                                          )));
+                                  // Navigator.of(context).push(MaterialPageRoute(
+                                  //     builder: (context) => UserMenuComponent(
+                                  //           user: _user,
+                                  //           jwt: _jwt,
+                                  //         )));
                                 },
                                 child: const Text('Back')),
                             OutlinedButton(
@@ -122,6 +128,7 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                                           CreateProductComponent(
                                             user: _user,
                                             jwt: _jwt,
+                                            socket: _socket,
                                           )));
                                 },
                                 child: const Text('Add Product')),
@@ -135,7 +142,17 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                             itemBuilder: (BuildContext context, int index) {
                               Product product = _response[index];
                               return ListTile(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProductDetailComponent(
+                                                  id: product.id,
+                                                  user: _user,
+                                                  jwt: _jwt,
+                                                  socket: _socket,
+                                                )));
+                                  },
                                   isThreeLine: true,
                                   leading:
                                       Text('qty: ${product.count.toString()}'),
@@ -152,6 +169,7 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                                     id: product.id,
                                     user: _user,
                                     jwt: _jwt,
+                                    socket: _socket,
                                   ) //delete component here,
                                   );
                             }),
@@ -174,6 +192,7 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                                 builder: (context) => UserMenuComponent(
                                       user: _user,
                                       jwt: _jwt,
+                                      socket: _socket,
                                     )));
                           },
                           child: const Text('Back')),

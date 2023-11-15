@@ -1,16 +1,22 @@
 import 'dart:convert';
 import 'package:glowing_octo_lamp/product_components/get_all_products.dart';
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../models/user_model.dart';
 
 class DeleteProductComponent extends StatefulWidget {
   const DeleteProductComponent(
-      {super.key, required this.id, required this.user, required this.jwt});
+      {super.key,
+      required this.id,
+      required this.user,
+      required this.jwt,
+      required this.socket});
   final User user;
   final String jwt;
   final String id;
+  final IO.Socket socket;
 
   @override
   State<DeleteProductComponent> createState() => _DeleteProductComponentState();
@@ -20,6 +26,7 @@ class _DeleteProductComponentState extends State<DeleteProductComponent> {
   late String _id;
   late User _user;
   late String _jwt;
+  late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
   String _message = "";
@@ -30,6 +37,7 @@ class _DeleteProductComponentState extends State<DeleteProductComponent> {
     _user = widget.user;
     _jwt = widget.jwt;
     _id = widget.id;
+    _socket = widget.socket;
     super.initState();
   }
 
@@ -48,6 +56,7 @@ class _DeleteProductComponentState extends State<DeleteProductComponent> {
               builder: (context) => GetAllProductsComponent(
                     user: _user,
                     jwt: _jwt,
+                    socket: _socket,
                   )));
         } else {
           setState(() {

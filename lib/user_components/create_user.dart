@@ -4,9 +4,11 @@ import 'package:glowing_octo_lamp/user_components/login.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../validate.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class CreateUserComponent extends StatefulWidget {
-  const CreateUserComponent({super.key});
+  const CreateUserComponent({super.key, required this.socket});
+  final IO.Socket socket;
 
   @override
   State<CreateUserComponent> createState() => _CreateUserComponentState();
@@ -25,11 +27,18 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   final _confirmPasswordTextController = TextEditingController();
   final _confirmPasswordFocusNode = FocusNode();
   final _typeFocusNode = FocusNode();
+  late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
   String _message = "";
   Map<String, dynamic> _response = {};
   String _selectedtype = "General";
+
+  @override
+  void initState() {
+    super.initState();
+    _socket = widget.socket;
+  }
 
   Future<void> createUser(String firstName, String lastName, String email,
       String password, String type) async {
@@ -53,8 +62,9 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
             _response = json.decode(response.body);
           });
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const LoginComponent(
+              builder: (context) => LoginComponent(
                     message: 'Success! You can now login!',
+                    socket: _socket,
                   )));
         } else {
           setState(() {
