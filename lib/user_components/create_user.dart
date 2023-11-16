@@ -105,270 +105,262 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: !_error
-              ? GestureDetector(
-                  onTap: () {
-                    _firstNameFocusNode.unfocus();
-                    _lastNameFocusNode.unfocus();
-                    _emailFocusNode.unfocus();
-                    _passwordFocusNode.unfocus();
-                    _confirmPasswordFocusNode.unfocus();
-                    _typeFocusNode.unfocus();
-                  },
-                  child: Form(
-                    key: _createUserFormKey,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Card(
-                          elevation: 25,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('REGISTER'),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  autocorrect: false,
-                                  controller: _firstNameTextController,
-                                  focusNode: _firstNameFocusNode,
-                                  validator: (value) => Validator.validateName(
-                                    name: value,
-                                  ),
-                                  style: const TextStyle(),
-                                  decoration: const InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    labelText: "First Name",
-                                    labelStyle: TextStyle(),
-                                  ),
-                                ),
+    return !_error
+        ? GestureDetector(
+            onTap: () {
+              _firstNameFocusNode.unfocus();
+              _lastNameFocusNode.unfocus();
+              _emailFocusNode.unfocus();
+              _passwordFocusNode.unfocus();
+              _confirmPasswordFocusNode.unfocus();
+              _typeFocusNode.unfocus();
+            },
+            child: Form(
+              key: _createUserFormKey,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Card(
+                    elevation: 25,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: const Text('Create New User'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            autocorrect: false,
+                            controller: _firstNameTextController,
+                            focusNode: _firstNameFocusNode,
+                            validator: (value) => Validator.validateName(
+                              name: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  autocorrect: false,
-                                  controller: _lastNameTextController,
-                                  focusNode: _lastNameFocusNode,
-                                  validator: (value) => Validator.validateName(
-                                    name: value,
-                                  ),
-                                  style: const TextStyle(),
-                                  decoration: const InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    labelText: "Last Name",
-                                    labelStyle: TextStyle(),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  autocorrect: false,
-                                  controller: _emailTextController,
-                                  focusNode: _emailFocusNode,
-                                  validator: (value) => Validator.validateEmail(
-                                    email: value,
-                                  ),
-                                  style: const TextStyle(),
-                                  decoration: const InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    labelText: "Email",
-                                    labelStyle: TextStyle(),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  obscureText: true,
-                                  autocorrect: false,
-                                  controller: _passwordTextController,
-                                  focusNode: _passwordFocusNode,
-                                  validator: (value) =>
-                                      Validator.validatePassword(
-                                    password: value,
-                                  ),
-                                  style: const TextStyle(),
-                                  decoration: const InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    labelText: "Password",
-                                    labelStyle: TextStyle(),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: TextFormField(
-                                  obscureText: true,
-                                  autocorrect: false,
-                                  controller: _confirmPasswordTextController,
-                                  focusNode: _confirmPasswordFocusNode,
-                                  validator: (value) =>
-                                      Validator.validatePassword(
-                                    password: value,
-                                  ),
-                                  style: const TextStyle(),
-                                  decoration: const InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    labelText: "Confirm Password",
-                                    labelStyle: TextStyle(),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: DropdownButtonFormField(
-                                  value: _selectedtype,
-                                  items: dropdownItems,
-                                  focusNode: _typeFocusNode,
-                                  style: const TextStyle(),
-                                  decoration: const InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    labelText: "Permission Level",
-                                    labelStyle: TextStyle(),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedtype = value!;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    // Padding(
-                                    //   padding: const EdgeInsets.all(8.0),
-                                    //   child: OutlinedButton(
-                                    //       onPressed: () {
-                                    //         Navigator.of(context).pop();
-                                    //       },
-                                    //       child: const Text(
-                                    //         'Back',
-                                    //         style:
-                                    //             TextStyle(color: Colors.black),
-                                    //       )),
-                                    // ),
-                                    _isProcessing
-                                        ? const CircularProgressIndicator()
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: OutlinedButton(
-                                                onPressed: () async {
-                                                  _firstNameFocusNode.unfocus();
-                                                  _lastNameFocusNode.unfocus();
-                                                  _emailFocusNode.unfocus();
-                                                  _passwordFocusNode.unfocus();
-                                                  _confirmPasswordFocusNode
-                                                      .unfocus();
-                                                  _typeFocusNode.unfocus();
-                                                  if (_createUserFormKey
-                                                      .currentState!
-                                                      .validate()) {
-                                                    setState(() {
-                                                      _isProcessing = true;
-                                                    });
-                                                    await createUser(
-                                                        _firstNameTextController
-                                                            .text,
-                                                        _lastNameTextController
-                                                            .text,
-                                                        _emailTextController
-                                                            .text,
-                                                        _passwordTextController
-                                                            .text,
-                                                        _selectedtype);
-                                                  }
-                                                },
-                                                child: const Text(
-                                                  'Register',
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                )),
-                                          ),
-                                  ],
-                                ),
-                              )
-                            ],
+                              labelText: "First Name",
+                              labelStyle: TextStyle(),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                )
-              : !_error
-                  ? Column(
-                      children: [
-                        Text(_response.toString()),
-                        const Text('SUCCESS'),
-                        OutlinedButton(
-                            onPressed: () {
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            autocorrect: false,
+                            controller: _lastNameTextController,
+                            focusNode: _lastNameFocusNode,
+                            validator: (value) => Validator.validateName(
+                              name: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              labelText: "Last Name",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            autocorrect: false,
+                            controller: _emailTextController,
+                            focusNode: _emailFocusNode,
+                            validator: (value) => Validator.validateEmail(
+                              email: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              labelText: "Email",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            obscureText: true,
+                            autocorrect: false,
+                            controller: _passwordTextController,
+                            focusNode: _passwordFocusNode,
+                            validator: (value) => Validator.validatePassword(
+                              password: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              labelText: "Password",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            obscureText: true,
+                            autocorrect: false,
+                            controller: _confirmPasswordTextController,
+                            focusNode: _confirmPasswordFocusNode,
+                            validator: (value) => Validator.validatePassword(
+                              password: value,
+                            ),
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              labelText: "Confirm Password",
+                              labelStyle: TextStyle(),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButtonFormField(
+                            value: _selectedtype,
+                            items: dropdownItems,
+                            focusNode: _typeFocusNode,
+                            style: const TextStyle(),
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              labelText: "Permission Level",
+                              labelStyle: TextStyle(),
+                            ),
+                            onChanged: (value) {
                               setState(() {
-                                _error = false;
-                                _firstNameTextController.text = "";
-                                _lastNameTextController.text = "";
-                                _emailTextController.text = "";
-                                _passwordTextController.text = "";
-                                _confirmPasswordTextController.text = "";
-                                _selectedtype = "Training";
-                                _response = {};
+                                _selectedtype = value!;
                               });
                             },
-                            child: const Text('Ok'))
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        Text(
-                          _message,
-                          style: const TextStyle(color: Colors.black),
+                          ),
                         ),
-                        Text(
-                          _response.toString(),
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                        OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Back'))
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Padding(
+                              //   padding: const EdgeInsets.all(8.0),
+                              //   child: OutlinedButton(
+                              //       onPressed: () {
+                              //         Navigator.of(context).pop();
+                              //       },
+                              //       child: const Text(
+                              //         'Back',
+                              //         style:
+                              //             TextStyle(color: Colors.black),
+                              //       )),
+                              // ),
+                              _isProcessing
+                                  ? const CircularProgressIndicator()
+                                  : Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: OutlinedButton(
+                                          onPressed: () async {
+                                            _firstNameFocusNode.unfocus();
+                                            _lastNameFocusNode.unfocus();
+                                            _emailFocusNode.unfocus();
+                                            _passwordFocusNode.unfocus();
+                                            _confirmPasswordFocusNode.unfocus();
+                                            _typeFocusNode.unfocus();
+                                            if (_createUserFormKey.currentState!
+                                                .validate()) {
+                                              setState(() {
+                                                _isProcessing = true;
+                                              });
+                                              await createUser(
+                                                  _firstNameTextController.text,
+                                                  _lastNameTextController.text,
+                                                  _emailTextController.text,
+                                                  _passwordTextController.text,
+                                                  _selectedtype);
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Register',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          )),
+                                    ),
+                            ],
+                          ),
+                        )
                       ],
-                    )),
-    );
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        : !_error
+            ? Column(
+                children: [
+                  Text(_response.toString()),
+                  const Text('SUCCESS'),
+                  OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          _error = false;
+                          _firstNameTextController.text = "";
+                          _lastNameTextController.text = "";
+                          _emailTextController.text = "";
+                          _passwordTextController.text = "";
+                          _confirmPasswordTextController.text = "";
+                          _selectedtype = "Training";
+                          _response = {};
+                        });
+                      },
+                      child: const Text('Ok'))
+                ],
+              )
+            : Column(
+                children: [
+                  Text(
+                    _message,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  Text(
+                    _response.toString(),
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Back'))
+                ],
+              );
   }
 }

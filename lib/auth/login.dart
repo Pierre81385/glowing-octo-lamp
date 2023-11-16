@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/home.dart';
 import 'package:glowing_octo_lamp/user_components/user_menu.dart';
@@ -9,7 +11,10 @@ import '../helpers/validate.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class LoginComponent extends StatefulWidget {
-  const LoginComponent({super.key, required this.message});
+  const LoginComponent({
+    super.key,
+    required this.message,
+  });
   final String message;
 
   @override
@@ -86,116 +91,118 @@ class _LoginComponentState extends State<LoginComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: _error
-          ? SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _message,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                    Text(
-                      _response.toString(),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                    OutlinedButton(
-                        onPressed: () {
-                          setState(() {
-                            _emailLoginTextController.text = "";
-                            _passwordLoginTextController.text = "";
-                            _error = false;
-                            _response = {};
-                          });
-                        },
-                        child: const Text('Back'))
-                  ],
-                ),
+    return _error
+        ? SafeArea(
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _message,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  Text(
+                    _response.toString(),
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          _emailLoginTextController.text = "";
+                          _passwordLoginTextController.text = "";
+                          _error = false;
+                          _response = {};
+                        });
+                      },
+                      child: const Text('Back'))
+                ],
               ),
-            )
-          : GestureDetector(
-              onTap: () {
-                _emailLoginFocusNode.unfocus();
-                _passwordLoginFocusNode.unfocus();
-              },
-              child: SafeArea(
-                child: Form(
-                  key: _loginFormKey,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Card(
+            ),
+          )
+        : GestureDetector(
+            onTap: () {
+              _emailLoginFocusNode.unfocus();
+              _passwordLoginFocusNode.unfocus();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Card(
+                        color: Colors.white,
                         elevation: 25,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                _message,
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                autocorrect: false,
-                                cursorColor: Colors.black,
-                                controller: _emailLoginTextController,
-                                focusNode: _emailLoginFocusNode,
-                                validator: (value) => Validator.validateEmail(
-                                  email: value,
+                        child: Form(
+                          key: _loginFormKey,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  _message,
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 81, 16, 93)),
                                 ),
-                                style: const TextStyle(color: Colors.black),
-                                decoration: const InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  autocorrect: false,
+                                  cursorColor: Colors.black,
+                                  controller: _emailLoginTextController,
+                                  focusNode: _emailLoginFocusNode,
+                                  validator: (value) => Validator.validateEmail(
+                                    email: value,
                                   ),
-                                  labelText: "Email Address",
-                                  labelStyle: TextStyle(),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                autocorrect: false,
-                                obscureText: true,
-                                cursorColor: Colors.black,
-                                controller: _passwordLoginTextController,
-                                focusNode: _passwordLoginFocusNode,
-                                validator: (value) =>
-                                    Validator.validatePassword(
-                                  password: value,
-                                ),
-                                style: const TextStyle(color: Colors.black),
-                                decoration: const InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
+                                  style: const TextStyle(color: Colors.black),
+                                  decoration: const InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    labelText: "Email Address",
+                                    labelStyle: TextStyle(),
                                   ),
-                                  labelText: "Password",
-                                  labelStyle: TextStyle(),
                                 ),
                               ),
-                            ),
-                            _isProcessing
-                                ? const CircularProgressIndicator(
-                                    color: Colors.black,
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  autocorrect: false,
+                                  obscureText: true,
+                                  cursorColor: Colors.black,
+                                  controller: _passwordLoginTextController,
+                                  focusNode: _passwordLoginFocusNode,
+                                  validator: (value) =>
+                                      Validator.validatePassword(
+                                    password: value,
+                                  ),
+                                  style: const TextStyle(color: Colors.black),
+                                  decoration: const InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    labelText: "Password",
+                                    labelStyle: TextStyle(),
+                                  ),
+                                ),
+                              ),
+                              _isProcessing
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.black,
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
                                         // Padding(
                                         //   padding: const EdgeInsets.all(8.0),
                                         //   child: OutlinedButton(
@@ -214,38 +221,38 @@ class _LoginComponentState extends State<LoginComponent> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: OutlinedButton(
-                                              onPressed: () async {
-                                                _emailLoginFocusNode.unfocus();
-                                                _passwordLoginFocusNode
-                                                    .unfocus();
+                                            onPressed: () async {
+                                              _emailLoginFocusNode.unfocus();
+                                              _passwordLoginFocusNode.unfocus();
 
-                                                if (_loginFormKey.currentState!
-                                                    .validate()) {
-                                                  setState(() {
-                                                    _isProcessing = true;
-                                                  });
-                                                  await Login(
-                                                      _emailLoginTextController
-                                                          .text,
-                                                      _passwordLoginTextController
-                                                          .text);
-                                                }
-                                              },
-                                              child: const Text(
-                                                'Login',
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                              )),
+                                              if (_loginFormKey.currentState!
+                                                  .validate()) {
+                                                setState(() {
+                                                  _isProcessing = true;
+                                                });
+                                                await Login(
+                                                    _emailLoginTextController
+                                                        .text,
+                                                    _passwordLoginTextController
+                                                        .text);
+                                              }
+                                            },
+                                            child: const Text(
+                                              'Login',
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          ),
                                         ),
-                                      ]),
-                          ],
+                                      ],
+                                    ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
+                    ]),
               ),
             ),
-    );
+          );
   }
 }
