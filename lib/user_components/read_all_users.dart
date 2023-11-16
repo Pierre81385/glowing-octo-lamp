@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:glowing_octo_lamp/constants.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import './delete_user.dart';
+import '../helpers/constants.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class GetAllUsersComponent extends StatefulWidget {
@@ -64,6 +64,9 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
     _jwt = widget.jwt;
     _id = widget.id;
     _socket = widget.socket;
+    _socket.on("update_users_list", (data) {
+      getAllUsers(_jwt);
+    });
     getAllUsers(_jwt);
     super.initState();
   }

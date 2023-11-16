@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:glowing_octo_lamp/product_components/get_all_products.dart';
+import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import '../constants.dart';
+import '../helpers/constants.dart';
+import '../helpers/validate.dart';
 import '../models/user_model.dart';
-import '../validate.dart';
 
 class CreateProductComponent extends StatefulWidget {
   const CreateProductComponent(

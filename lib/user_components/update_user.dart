@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:glowing_octo_lamp/user_components/get_user.dart';
-import 'package:glowing_octo_lamp/user_components/user_menu.dart';
+import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
 import 'package:http/http.dart' as http;
-import '../constants.dart';
 import '../models/user_model.dart';
-import '../validate.dart';
+import '../helpers/constants.dart';
+import '../helpers/validate.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class UpdateUserComponent extends StatefulWidget {
@@ -73,6 +72,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
           setState(() {
             _isProcessing = false;
           });
+          _socket.emit('user_update_successful', {'message': 'update users!'});
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => GetUserComponent(
                     user: _user,

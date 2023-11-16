@@ -22,9 +22,11 @@ const io = socketIo(server, {
 
 const UserRouter = require("./routes/UsersRoutes");
 const ProductRouter = require("./routes/ProductRoutes");
+const OrderRouter = require("./routes/OrderRoutes");
 
 app.use("/users", UserRouter);
 app.use("/products", ProductRouter);
+app.use("/orders", OrderRouter);
 
 const uri = process.env.ATLAS_URI;
 mongoose.connect(uri, {
@@ -46,11 +48,19 @@ io.on("connection", (socket) => {
     io.emit("notify_login", data);
   });
 
-  socket.on("viewed profile", function () {
-    console.log("user viewed their profile");
+  //notify update required to product lists
+  socket.on("product_update_successful", function (data) {
+    console.log(data.message);
+    io.emit("update_product_list", data);
   });
 
-  socket.on("disconnect", (data) => {
+  //notifiy update required to users lists
+  socket.on("user_update_successful", function (data) {
+    console.log(data.message);
+    io.emit("update_users_list", data);
+  });
+
+  io.on("disconnect", (data) => {
     console.log("user disconnected");
   });
 });

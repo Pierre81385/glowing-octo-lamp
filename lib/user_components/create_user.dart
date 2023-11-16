@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:glowing_octo_lamp/user_components/login.dart';
+import 'package:glowing_octo_lamp/auth/login.dart';
 import 'package:http/http.dart' as http;
-import '../constants.dart';
-import '../validate.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../helpers/constants.dart';
+import '../helpers/validate.dart';
 
 class CreateUserComponent extends StatefulWidget {
-  const CreateUserComponent({super.key, required this.socket});
-  final IO.Socket socket;
+  const CreateUserComponent({super.key});
 
   @override
   State<CreateUserComponent> createState() => _CreateUserComponentState();
@@ -27,7 +25,6 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   final _confirmPasswordTextController = TextEditingController();
   final _confirmPasswordFocusNode = FocusNode();
   final _typeFocusNode = FocusNode();
-  late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
   String _message = "";
@@ -37,7 +34,6 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   @override
   void initState() {
     super.initState();
-    _socket = widget.socket;
   }
 
   Future<void> createUser(String firstName, String lastName, String email,
@@ -64,7 +60,6 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => LoginComponent(
                     message: 'Success! You can now login!',
-                    socket: _socket,
                   )));
         } else {
           setState(() {
@@ -170,6 +165,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                             ),
                           ),
                           TextFormField(
+                            obscureText: true,
                             autocorrect: false,
                             controller: _passwordTextController,
                             focusNode: _passwordFocusNode,
@@ -183,6 +179,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                             ),
                           ),
                           TextFormField(
+                            obscureText: true,
                             autocorrect: false,
                             controller: _confirmPasswordTextController,
                             focusNode: _confirmPasswordFocusNode,
@@ -287,11 +284,11 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                       children: [
                         Text(
                           _message,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.black),
                         ),
                         Text(
                           _response.toString(),
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.black),
                         ),
                         OutlinedButton(
                             onPressed: () {

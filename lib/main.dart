@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:glowing_octo_lamp/user_components/create_user.dart';
-import 'package:glowing_octo_lamp/user_components/login.dart';
 
 import 'home.dart';
 

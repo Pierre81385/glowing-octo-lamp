@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/product_components/create_product.dart';
 import 'package:glowing_octo_lamp/product_components/delete_product.dart';
-import 'package:glowing_octo_lamp/product_components/get_product.dart';
+import 'package:glowing_octo_lamp/product_components/read_one_product.dart';
 import 'package:glowing_octo_lamp/user_components/user_menu.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:glowing_octo_lamp/constants.dart';
+import '../helpers/constants.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 
@@ -36,6 +36,9 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
     _user = widget.user;
     _jwt = widget.jwt;
     _socket = widget.socket;
+    _socket.on("update_product_list", (data) {
+      getAllProduct();
+    });
     getAllProduct();
     super.initState();
   }
@@ -114,11 +117,12 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                           children: [
                             OutlinedButton(
                                 onPressed: () {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) => UserMenuComponent(
-                                  //           user: _user,
-                                  //           jwt: _jwt,
-                                  //         )));
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => UserMenuComponent(
+                                            user: _user,
+                                            jwt: _jwt,
+                                            socket: _socket,
+                                          )));
                                 },
                                 child: const Text('Back')),
                             OutlinedButton(

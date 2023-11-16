@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:glowing_octo_lamp/product_components/get_all_products.dart';
-import 'package:glowing_octo_lamp/user_components/get_all_users.dart';
-import 'package:glowing_octo_lamp/user_components/get_user.dart';
-import 'package:glowing_octo_lamp/user_components/login.dart';
+import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
+import 'package:glowing_octo_lamp/user_components/read_all_users.dart';
+import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
+import 'package:glowing_octo_lamp/auth/login.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../models/user_model.dart';
@@ -44,7 +42,6 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
           children: [
             OutlinedButton(
                 onPressed: () {
-                  _socket.emit('viewed profile');
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => GetUserComponent(
                             jwt: _jwt,
@@ -52,7 +49,7 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                             socket: _socket,
                           )));
                 },
-                child: Text('My Profile')),
+                child: Text('Get User')),
             OutlinedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -75,6 +72,7 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                 child: Text('Manage Product')),
             OutlinedButton(
                 onPressed: () {
+                  _socket.disconnect();
                   setState(() {
                     _jwt = "";
                     _user = User(
@@ -88,7 +86,6 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => LoginComponent(
                             message: 'Welcome!',
-                            socket: _socket,
                           )));
                 },
                 child: Text('Logout')),

@@ -9,10 +9,8 @@ import '../validate.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class LoginComponent extends StatefulWidget {
-  const LoginComponent(
-      {super.key, required this.message, required this.socket});
+  const LoginComponent({super.key, required this.message});
   final String message;
-  final IO.Socket socket;
 
   @override
   State<LoginComponent> createState() => _LoginComponentState();
@@ -24,16 +22,20 @@ class _LoginComponentState extends State<LoginComponent> {
   final _emailLoginFocusNode = FocusNode();
   final _passwordLoginTextController = TextEditingController();
   final _passwordLoginFocusNode = FocusNode();
-  late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
   Map<String, dynamic> _response = {};
   String _message = "LOGIN";
+  IO.Socket socket =
+      IO.io('${ApiConstants.baseUrl}${ApiConstants.port}', <String, dynamic>{
+    'transports': ['websocket'],
+    'autoConnect': false,
+  });
 
   @override
   void initState() {
     super.initState();
-    _socket = widget.socket;
+    socket.connect();
     _message = widget.message;
   }
 
@@ -56,12 +58,12 @@ class _LoginComponentState extends State<LoginComponent> {
             _passwordLoginTextController.text = "";
             _response = json.decode(response.body);
           });
-          _socket.emit('login', _response);
+          socket.emit('login', _response);
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => UserMenuComponent(
                     user: User.fromJson(_response['user']),
                     jwt: _response['jwt'],
-                    socket: _socket,
+                    socket: socket,
                   )));
         } else {
           setState(() {

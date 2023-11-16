@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import '../constants.dart';
 import '../models/product_model.dart';
-import '../validate.dart';
+import '../helpers/constants.dart';
+import '../helpers/validate.dart';
 
 class UpdateProductComponent extends StatefulWidget {
   const UpdateProductComponent(
@@ -62,7 +62,8 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
           setState(() {
             _isProcessing = false;
           });
-
+          _socket.emit(
+              'product_update_successful', {'message': 'update product!'});
           Navigator.of(context).pop();
         } else {
           setState(() {

@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:glowing_octo_lamp/product_components/get_all_products.dart';
+import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../helpers/constants.dart';
 import '../models/user_model.dart';
 
 class DeleteProductComponent extends StatefulWidget {
