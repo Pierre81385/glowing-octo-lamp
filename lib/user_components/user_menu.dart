@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glowing_octo_lamp/home.dart';
 import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
 import 'package:glowing_octo_lamp/user_components/read_all_users.dart';
 import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
@@ -101,10 +102,7 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                         type: 'logout');
                   });
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => LoginComponent(
-                            message: 'Welcome!',
-                            socket: _socket,
-                          )));
+                      builder: (context) => Home(socket: _socket)));
                 },
                 icon: Icon(Icons.power_settings_new_rounded),
                 label: Text('Logout')),

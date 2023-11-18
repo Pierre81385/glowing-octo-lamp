@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/user_components/update_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../models/api_model.dart';
 import '../models/user_model.dart';
 import '../helpers/constants.dart';
 import 'user_menu.dart';
@@ -22,6 +23,8 @@ class _GetUserComponentState extends State<GetUserComponent> {
   late String _jwt;
   late User _user;
   late IO.Socket _socket;
+  final api =
+      ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
   bool _isProcessing = true;
   bool _error = false;
   String _message = "";
@@ -32,36 +35,24 @@ class _GetUserComponentState extends State<GetUserComponent> {
     _jwt = widget.jwt;
     _user = widget.user;
     _socket = widget.socket;
-    getUserById(_user.id, _jwt);
+    getUserById(_user.id);
     super.initState();
   }
 
-  Future<void> getUserById(String id, String token) async {
+  Future<void> getUserById(id) async {
     try {
-      await http.get(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/users/$id'),
-        headers: {"Authorization": token, "Content-Type": "application/json"},
-      ).then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            _isProcessing = false;
-            _response = json.decode(response.body);
-          });
-        } else {
-          setState(() {
-            _isProcessing = false;
-            _error = true;
-            _response = json.decode(response.body);
-            _user = User.fromJson(json.decode(response.body));
-          });
-          throw Exception('Failed to get new user.');
-        }
+      final resp = await api.getAll("users/$id", _jwt, _socket);
+      setState(() {
+        _response = resp;
+        _error = false;
+        _message = "Found users!";
+        _isProcessing = false;
       });
     } on Exception catch (e) {
       setState(() {
-        _isProcessing = false;
         _error = true;
         _message = e.toString();
+        _isProcessing = false;
       });
     }
   }

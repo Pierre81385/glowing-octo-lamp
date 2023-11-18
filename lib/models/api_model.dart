@@ -7,16 +7,14 @@ class ApiService {
 
   ApiService({required this.baseUrl});
 
-  Future<List<Map<String, dynamic>>> getAll(
+  Future<Map<String, dynamic>> getAll(
       String endpoint, String auth, IO.Socket socket) async {
     final response = await http.get(
       Uri.parse('$baseUrl/$endpoint'),
       headers: {"Authorization": auth, "Content-Type": "application/json"},
     );
-    final parsed =
-        (jsonDecode(response.body) as List).cast<Map<String, dynamic>>();
     if (response.statusCode == 200) {
-      return parsed;
+      return json.decode(response.body);
     } else {
       throw Exception('Failed to read data');
     }
@@ -44,21 +42,21 @@ class ApiService {
       body: json.encode(data),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
+      print(response.body);
       throw Exception('Failed to create data');
     }
   }
 
   Future<Map<String, dynamic>> update(String endpoint, String auth,
-      String param, Map<String, dynamic> data, IO.Socket socket) async {
+      Map<String, dynamic> data, IO.Socket socket) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/$endpoint/$param'),
+      Uri.parse('$baseUrl/$endpoint/${data['_id']}'),
       headers: {"Authorization": auth, "Content-Type": "application/json"},
       body: json.encode(data),
     );
-
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {

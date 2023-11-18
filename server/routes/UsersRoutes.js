@@ -73,39 +73,33 @@ router.route("/login").post(async (req, res) => {
 
 //read all
 router.route("/").get(authenticateToken, (req, res) => {
-  User.find()
-    .then((users) => res.status(200).json(users))
-    .catch((err) => res.status(400).json("Error: " + err));
+  User.find().then((users) => {
+    return res.status(200).json({ message: "Found users!", users: users });
+  });
 });
 
 //read one
 router.route("/:id").get(authenticateToken, (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => res.status(200).json(user))
-    .catch((err) => res.status(400).json("Error: " + err));
+  User.findById(req.params.id).then((user) =>
+    res.status(200).json({ message: "Found user!", user: user })
+  );
 });
 
 //update
 router.route("/:id").put(authenticateToken, async (req, res) => {
   const user = req.body;
-  //const nameTaken = await User.findOne({ name: user.name });
-  //const emailTaken = await User.findOne({ email: user.email });
-
-  // if (emailTaken) {
-  //   res
-  //     .status(409)
-  //     .json({ message: "CONFLICT, email address already in use." });
-  // } else {
-  user.password = await bcrypt.hash(req.body.password, 10);
+  //user.password = await bcrypt.hash(req.body.password, 10);
   const newUser = new User({
+    _id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
     password: user.password,
     type: user.type,
   });
+  console.log(req.body);
   await User.findByIdAndUpdate(
-    { _id: req.params.id },
+    { _id: newUser.id },
     {
       $set: {
         firstName: newUser.firstName,
@@ -120,10 +114,12 @@ router.route("/:id").put(authenticateToken, async (req, res) => {
     }
   )
     .then(() => {
-      res.status(200).json("Success!");
+      console.log(res.statusMessage);
+      res.status(201).json({ message: "User updated!", user: newUser });
     })
     .catch((err) => {
-      res.status(400).json("Error: " + err);
+      console.log(err.message);
+      res.status(400).json({ error: err });
     });
   //}
 });
@@ -133,10 +129,10 @@ router.route("/:id").delete(authenticateToken, (req, res) => {
   const { id } = req.params;
   User.findByIdAndDelete(id)
     .then(() => {
-      res.status(200).json("User deleted!");
+      res.status(200).json({ message: "User deleted!" });
     })
     .catch((err) => {
-      res.status(400).json("Error: " + err);
+      res.status(400).json({ message: err });
     });
 });
 

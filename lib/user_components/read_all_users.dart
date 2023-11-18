@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import './delete_user.dart';
@@ -20,6 +22,7 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   late String _jwt;
   late String _id;
   late IO.Socket _socket;
+  bool _update = false;
   bool _isProcessing = true;
   bool _error = false;
   String _message = "";
@@ -30,11 +33,15 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   Future<void> getAllUsers() async {
     try {
       final resp = await api.getAll("users/", _jwt, _socket);
+      final parsed = (resp['users'] as List).cast<Map<String, dynamic>>();
+      final map = parsed.map<User>((json) => User.fromJson(json)).toList();
       setState(() {
-        _response = resp.map<User>((json) => User.fromJson(json)).toList();
+        _response = map;
+        _error = false;
+        _message = "Found users!";
         _isProcessing = false;
       });
-    } catch (e) {
+    } on Exception catch (e) {
       setState(() {
         _error = true;
         _message = e.toString();
@@ -86,7 +93,7 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                                           '${user.firstName} ${user.lastName}'),
                                       subtitle: Text(user.type),
                                       trailing: DeleteUserComponent(
-                                        id: _id,
+                                        id: user.id,
                                         jwt: _jwt,
                                         socket: _socket,
                                       ),

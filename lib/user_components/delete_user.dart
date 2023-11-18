@@ -5,8 +5,12 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../models/api_model.dart';
 
 class DeleteUserComponent extends StatefulWidget {
-  const DeleteUserComponent(
-      {super.key, required this.id, required this.jwt, required this.socket});
+  const DeleteUserComponent({
+    super.key,
+    required this.id,
+    required this.jwt,
+    required this.socket,
+  });
   final String id;
   final String jwt;
   final IO.Socket socket;
@@ -36,11 +40,14 @@ class _DeleteUserComponentState extends State<DeleteUserComponent> {
 
   Future<void> deleteUser() async {
     try {
-      await api.deleteOne("users/", _jwt, _id, _socket);
+      final resp = await api.deleteOne("users/", _jwt, _id, _socket);
+      print(resp.toString());
       setState(() {
         _isProcessing = false;
       });
+      _socket.emit('user_deleted', {"message": "A user has been deleted."});
     } catch (e) {
+      print(e.toString());
       setState(() {
         _isProcessing = false;
         _error = true;
@@ -53,16 +60,8 @@ class _DeleteUserComponentState extends State<DeleteUserComponent> {
   Widget build(BuildContext context) {
     return _isProcessing
         ? const CircularProgressIndicator()
-        : !_error
+        : _error
             ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isProcessing = true;
-                  });
-                  deleteUser();
-                },
-                icon: const Icon(Icons.delete))
-            : IconButton(
                 onPressed: () {
                   AlertDialog(
                     title: const Text('ERROR'),
@@ -73,6 +72,15 @@ class _DeleteUserComponentState extends State<DeleteUserComponent> {
                     ),
                   );
                 },
-                icon: const Icon(Icons.error));
+                icon: const Icon(Icons.error))
+            : IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isProcessing = true;
+                    _error = false;
+                  });
+                  deleteUser();
+                },
+                icon: const Icon(Icons.delete));
   }
 }

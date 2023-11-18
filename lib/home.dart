@@ -58,48 +58,7 @@ class _HomeState extends State<Home> {
               SizedBox(height: height, width: width, child: _switch[1])
             ],
           ),
-        ))
-            // Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     const Padding(
-            //       padding: EdgeInsets.all(8.0),
-            //       child: Text('Welcome'),
-            //     ),
-            //     Row(
-            //       mainAxisAlignment: MainAxisAlignment.center,
-            //       children: [
-            //         Padding(
-            //           padding: const EdgeInsets.all(8.0),
-            //           child: OutlinedButton(
-            //               onPressed: () {
-            //                 Navigator.of(context).push(MaterialPageRoute(
-            //                     builder: (context) => CreateUserComponent()));
-            //               },
-            //               child: const Text(
-            //                 'Register',
-            //                 style: TextStyle(color: Colors.black),
-            //               )),
-            //         ),
-            //         Padding(
-            //           padding: const EdgeInsets.all(8.0),
-            //           child: OutlinedButton(
-            //               onPressed: () {
-            //                 Navigator.of(context).push(MaterialPageRoute(
-            //                     builder: (context) => LoginComponent(
-            //                           message: "LOGIN",
-            //                         )));
-            //               },
-            //               child: const Text(
-            //                 'Login',
-            //                 style: TextStyle(color: Colors.black),
-            //               )),
-            //         )
-            //       ],
-            //     )
-            //   ],
-            // ),
-            ),
+        ))),
         floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.black,
           onPressed: () {
@@ -109,12 +68,12 @@ class _HomeState extends State<Home> {
             switcher();
           },
           label: !login
-              ? Icon(
+              ? const Icon(
                   Icons.login_outlined,
                   color: Colors.white,
                   size: 50,
                 )
-              : Icon(
+              : const Icon(
                   Icons.add,
                   color: Colors.white,
                   size: 50,

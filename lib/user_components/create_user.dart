@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/auth/login.dart';
+import 'package:glowing_octo_lamp/home.dart';
+import 'package:glowing_octo_lamp/user_components/user_menu.dart';
 import 'package:http/http.dart' as http;
 import '../helpers/constants.dart';
 import '../helpers/validate.dart';
@@ -44,14 +46,25 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
     try {
       final resp = await api.create('users/create', req, _socket);
       setState(() {
-        _user = resp['user'];
+        _error = false;
         _isProcessing = false;
+        _response = resp;
+        _message = resp["message"];
+        _user = User.fromJson(resp["user"]);
       });
+      success();
     } catch (e) {
       setState(() {
+        _error = true;
+        _isProcessing = false;
         _message = e.toString();
       });
     }
+  }
+
+  void success() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => Home(socket: _socket)));
   }
 
   @override
@@ -59,50 +72,6 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
     _socket = widget.socket;
     super.initState();
   }
-
-  // Future<void> createUser(String firstName, String lastName, String email,
-  //     String password, String type) async {
-  //   try {
-  //     await http
-  //         .post(
-  //             Uri.parse(
-  //                 '${ApiConstants.baseUrl}${ApiConstants.port}/users/create'),
-  //             headers: {"Content-Type": "application/json"},
-  //             body: jsonEncode({
-  //               'firstName': firstName,
-  //               'lastName': lastName,
-  //               'email': email,
-  //               'password': password,
-  //               'type': type
-  //             }))
-  //         .then((response) {
-  //       if (response.statusCode == 200) {
-  //         setState(() {
-  //           _isProcessing = false;
-  //           _response = json.decode(response.body);
-  //         });
-  //         Navigator.of(context).push(MaterialPageRoute(
-  //             builder: (context) => LoginComponent(
-  //                   message: 'Success! You can now login!',
-  //                   socket: _socket,
-  //                 )));
-  //       } else {
-  //         setState(() {
-  //           _isProcessing = false;
-  //           _error = true;
-  //           _response = json.decode(response.body);
-  //         });
-  //         throw Exception('Failed to create new user.');
-  //       }
-  //     });
-  //   } on Exception catch (e) {
-  //     setState(() {
-  //       _isProcessing = false;
-  //       _error = true;
-  //       _message = e.toString();
-  //     });
-  //   }
-  // }
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
@@ -130,8 +99,33 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return !_error
-        ? GestureDetector(
+    return _error
+        ? Expanded(
+            child: Card(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('ERROR'),
+                  Text(_message),
+                  OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          _error = false;
+                          _firstNameTextController.text = "";
+                          _lastNameTextController.text = "";
+                          _emailTextController.text = "";
+                          _passwordTextController.text = "";
+                          _confirmPasswordTextController.text = "";
+                          _selectedtype = "General";
+                          _response = {};
+                        });
+                      },
+                      child: const Text('Ok'))
+                ],
+              ),
+            ),
+          )
+        : GestureDetector(
             onTap: () {
               _firstNameFocusNode.unfocus();
               _lastNameFocusNode.unfocus();
@@ -297,18 +291,6 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Padding(
-                              //   padding: const EdgeInsets.all(8.0),
-                              //   child: OutlinedButton(
-                              //       onPressed: () {
-                              //         Navigator.of(context).pop();
-                              //       },
-                              //       child: const Text(
-                              //         'Back',
-                              //         style:
-                              //             TextStyle(color: Colors.black),
-                              //       )),
-                              // ),
                               _isProcessing
                                   ? const CircularProgressIndicator()
                                   : Padding(
@@ -370,26 +352,6 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                 ),
               ),
             ),
-          )
-        : Column(
-            children: [
-              const Text('ERROR'),
-              Text(_message),
-              OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      _error = false;
-                      _firstNameTextController.text = "";
-                      _lastNameTextController.text = "";
-                      _emailTextController.text = "";
-                      _passwordTextController.text = "";
-                      _confirmPasswordTextController.text = "";
-                      _selectedtype = "Training";
-                      _response = {};
-                    });
-                  },
-                  child: const Text('Ok'))
-            ],
           );
   }
 }
