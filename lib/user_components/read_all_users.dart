@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import './delete_user.dart';
 import '../helpers/constants.dart';
-import '../helpers/validate.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../models/api_model.dart';
 
 class GetAllUsersComponent extends StatefulWidget {
   const GetAllUsersComponent(
@@ -26,36 +24,21 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   bool _error = false;
   String _message = "";
   List<User> _response = [];
+  final api =
+      ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
 
-  Future<void> getAllUsers(String token) async {
+  Future<void> getAllUsers() async {
     try {
-      await http.get(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/users/'),
-        headers: {"Authorization": token, "Content-Type": "application/json"},
-      ).then((response) {
-        final parsed =
-            (jsonDecode(response.body) as List).cast<Map<String, dynamic>>();
-        if (response.statusCode == 200) {
-          setState(() {
-            _isProcessing = false;
-            _response =
-                parsed.map<User>((json) => User.fromJson(json)).toList();
-          });
-        } else {
-          setState(() {
-            _isProcessing = false;
-            _error = true;
-            _response =
-                parsed.map<User>((json) => User.fromJson(json)).toList();
-          });
-          throw Exception('Failed to get all users.');
-        }
-      });
-    } on Exception catch (e) {
+      final resp = await api.getAll("users/", _jwt, _socket);
       setState(() {
+        _response = resp.map<User>((json) => User.fromJson(json)).toList();
         _isProcessing = false;
+      });
+    } catch (e) {
+      setState(() {
         _error = true;
         _message = e.toString();
+        _isProcessing = false;
       });
     }
   }
@@ -66,9 +49,9 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
     _id = widget.id;
     _socket = widget.socket;
     _socket.on("update_users_list", (data) {
-      getAllUsers(_jwt);
+      getAllUsers();
     });
-    getAllUsers(_jwt);
+    getAllUsers();
     super.initState();
   }
 
@@ -96,7 +79,7 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                             itemBuilder: (BuildContext context, int index) {
                               User user = _response[index];
                               return user.id == _id
-                                  ? SizedBox()
+                                  ? const SizedBox()
                                   : ListTile(
                                       isThreeLine: true,
                                       title: Text(
@@ -116,11 +99,6 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                     children: [
                       Text(
                         _message,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      Text(
-                        _response.toString(),
-                        style: TextStyle(color: Colors.white),
                       ),
                       OutlinedButton(
                           onPressed: () {

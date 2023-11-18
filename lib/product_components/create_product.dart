@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../helpers/constants.dart';
 import '../helpers/validate.dart';
+import '../models/api_model.dart';
 import '../models/user_model.dart';
 
 class CreateProductComponent extends StatefulWidget {

@@ -40,17 +40,21 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => GetUserComponent(
-                            jwt: _jwt,
-                            user: _user,
-                            socket: _socket,
-                          )));
-                },
-                child: Text('Get User')),
-            OutlinedButton(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton.filled(
+                  iconSize: 75,
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => GetUserComponent(
+                              jwt: _jwt,
+                              user: _user,
+                              socket: _socket,
+                            )));
+                  },
+                  icon: Icon(Icons.person_pin_rounded)),
+            ),
+            ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => GetAllUsersComponent(
@@ -59,8 +63,9 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                             socket: _socket,
                           )));
                 },
-                child: Text('All Users')),
-            OutlinedButton(
+                icon: Icon(Icons.group),
+                label: Text('Users')),
+            ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => GetAllProductsComponent(
@@ -69,8 +74,20 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                             socket: _socket,
                           )));
                 },
-                child: Text('Manage Product')),
-            OutlinedButton(
+                icon: Icon(Icons.shopping_bag_rounded),
+                label: Text('Products')),
+            ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => GetAllProductsComponent(
+                            user: _user,
+                            jwt: _jwt,
+                            socket: _socket,
+                          )));
+                },
+                icon: Icon(Icons.view_list_rounded),
+                label: Text('Orders')),
+            ElevatedButton.icon(
                 onPressed: () {
                   _socket.disconnect();
                   setState(() {
@@ -86,9 +103,11 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => LoginComponent(
                             message: 'Welcome!',
+                            socket: _socket,
                           )));
                 },
-                child: Text('Logout')),
+                icon: Icon(Icons.power_settings_new_rounded),
+                label: Text('Logout')),
           ],
         ),
       )),

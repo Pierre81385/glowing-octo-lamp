@@ -4,9 +4,14 @@ import 'package:glowing_octo_lamp/auth/login.dart';
 import 'package:http/http.dart' as http;
 import '../helpers/constants.dart';
 import '../helpers/validate.dart';
+import '../models/api_model.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import '../models/user_model.dart';
 
 class CreateUserComponent extends StatefulWidget {
-  const CreateUserComponent({super.key});
+  const CreateUserComponent({super.key, required this.socket});
+  final IO.Socket socket;
 
   @override
   State<CreateUserComponent> createState() => _CreateUserComponentState();
@@ -25,59 +30,79 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   final _confirmPasswordTextController = TextEditingController();
   final _confirmPasswordFocusNode = FocusNode();
   final _typeFocusNode = FocusNode();
+  late IO.Socket _socket;
+  late User _user;
   bool _isProcessing = false;
   bool _error = false;
   String _message = "";
   Map<String, dynamic> _response = {};
   String _selectedtype = "General";
+  final api =
+      ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<void> createUser(String firstName, String lastName, String email,
-      String password, String type) async {
+  Future<void> createUser(req) async {
     try {
-      await http
-          .post(
-              Uri.parse(
-                  '${ApiConstants.baseUrl}${ApiConstants.port}/users/create'),
-              headers: {"Content-Type": "application/json"},
-              body: jsonEncode({
-                'firstName': firstName,
-                'lastName': lastName,
-                'email': email,
-                'password': password,
-                'type': type
-              }))
-          .then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            _isProcessing = false;
-            _response = json.decode(response.body);
-          });
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => LoginComponent(
-                    message: 'Success! You can now login!',
-                  )));
-        } else {
-          setState(() {
-            _isProcessing = false;
-            _error = true;
-            _response = json.decode(response.body);
-          });
-          throw Exception('Failed to create new user.');
-        }
-      });
-    } on Exception catch (e) {
+      final resp = await api.create('users/create', req, _socket);
       setState(() {
+        _user = resp['user'];
         _isProcessing = false;
-        _error = true;
+      });
+    } catch (e) {
+      setState(() {
         _message = e.toString();
       });
     }
   }
+
+  @override
+  void initState() {
+    _socket = widget.socket;
+    super.initState();
+  }
+
+  // Future<void> createUser(String firstName, String lastName, String email,
+  //     String password, String type) async {
+  //   try {
+  //     await http
+  //         .post(
+  //             Uri.parse(
+  //                 '${ApiConstants.baseUrl}${ApiConstants.port}/users/create'),
+  //             headers: {"Content-Type": "application/json"},
+  //             body: jsonEncode({
+  //               'firstName': firstName,
+  //               'lastName': lastName,
+  //               'email': email,
+  //               'password': password,
+  //               'type': type
+  //             }))
+  //         .then((response) {
+  //       if (response.statusCode == 200) {
+  //         setState(() {
+  //           _isProcessing = false;
+  //           _response = json.decode(response.body);
+  //         });
+  //         Navigator.of(context).push(MaterialPageRoute(
+  //             builder: (context) => LoginComponent(
+  //                   message: 'Success! You can now login!',
+  //                   socket: _socket,
+  //                 )));
+  //       } else {
+  //         setState(() {
+  //           _isProcessing = false;
+  //           _error = true;
+  //           _response = json.decode(response.body);
+  //         });
+  //         throw Exception('Failed to create new user.');
+  //       }
+  //     });
+  //   } on Exception catch (e) {
+  //     setState(() {
+  //       _isProcessing = false;
+  //       _error = true;
+  //       _message = e.toString();
+  //     });
+  //   }
+  // }
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
@@ -126,9 +151,10 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: const Text('Create New User'),
+                        Icon(
+                          Icons.group_add_rounded,
+                          color: Colors.black,
+                          size: 100,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -288,6 +314,19 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                                   : Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: OutlinedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty
+                                                    .resolveWith((states) {
+                                              // If the button is pressed, return green, otherwise blue
+                                              if (states.contains(
+                                                  MaterialState.pressed)) {
+                                                return Color.fromARGB(
+                                                    255, 81, 16, 93);
+                                              }
+                                              return Colors.black;
+                                            }),
+                                          ),
                                           onPressed: () async {
                                             _firstNameFocusNode.unfocus();
                                             _lastNameFocusNode.unfocus();
@@ -300,18 +339,26 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                                               setState(() {
                                                 _isProcessing = true;
                                               });
-                                              await createUser(
-                                                  _firstNameTextController.text,
-                                                  _lastNameTextController.text,
-                                                  _emailTextController.text,
-                                                  _passwordTextController.text,
-                                                  _selectedtype);
+                                              await createUser({
+                                                "firstName":
+                                                    _firstNameTextController
+                                                        .text,
+                                                "lastName":
+                                                    _lastNameTextController
+                                                        .text,
+                                                "email":
+                                                    _emailTextController.text,
+                                                "password":
+                                                    _passwordTextController
+                                                        .text,
+                                                "type": _selectedtype
+                                              });
                                             }
                                           },
                                           child: const Text(
-                                            'Register',
+                                            'Submit',
                                             style:
-                                                TextStyle(color: Colors.black),
+                                                TextStyle(color: Colors.white),
                                           )),
                                     ),
                             ],
@@ -324,43 +371,25 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
               ),
             ),
           )
-        : !_error
-            ? Column(
-                children: [
-                  Text(_response.toString()),
-                  const Text('SUCCESS'),
-                  OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          _error = false;
-                          _firstNameTextController.text = "";
-                          _lastNameTextController.text = "";
-                          _emailTextController.text = "";
-                          _passwordTextController.text = "";
-                          _confirmPasswordTextController.text = "";
-                          _selectedtype = "Training";
-                          _response = {};
-                        });
-                      },
-                      child: const Text('Ok'))
-                ],
-              )
-            : Column(
-                children: [
-                  Text(
-                    _message,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                  Text(
-                    _response.toString(),
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                  OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Back'))
-                ],
-              );
+        : Column(
+            children: [
+              const Text('ERROR'),
+              Text(_message),
+              OutlinedButton(
+                  onPressed: () {
+                    setState(() {
+                      _error = false;
+                      _firstNameTextController.text = "";
+                      _lastNameTextController.text = "";
+                      _emailTextController.text = "";
+                      _passwordTextController.text = "";
+                      _confirmPasswordTextController.text = "";
+                      _selectedtype = "Training";
+                      _response = {};
+                    });
+                  },
+                  child: const Text('Ok'))
+            ],
+          );
   }
 }

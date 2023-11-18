@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'helpers/constants.dart';
 import 'home.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  IO.Socket socket =
+      IO.io('${ApiConstants.baseUrl}${ApiConstants.port}', <String, dynamic>{
+    'transports': ['websocket'],
+    'autoConnect': false,
+  });
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -30,10 +35,12 @@ class MyApp extends StatelessWidget {
           //
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 81, 16, 93)),
+
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
           useMaterial3: true,
         ),
-        home: const Home());
+        home: Home(
+          socket: socket,
+        ));
   }
 }

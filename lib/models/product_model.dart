@@ -14,6 +14,17 @@ class Product {
       required this.count,
       required this.category});
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'price': price,
+      'count': count,
+      'category': category,
+    };
+  }
+
   factory Product.fromJson(Map<String, dynamic> product) {
     return Product(
         id: product["_id"],
