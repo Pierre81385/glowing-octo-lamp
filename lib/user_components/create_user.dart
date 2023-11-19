@@ -1,9 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:glowing_octo_lamp/auth/login.dart';
 import 'package:glowing_octo_lamp/home.dart';
-import 'package:glowing_octo_lamp/user_components/user_menu.dart';
-import 'package:http/http.dart' as http;
 import '../helpers/constants.dart';
 import '../helpers/validate.dart';
 import '../models/api_model.dart';
@@ -105,8 +101,14 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('ERROR'),
-                  Text(_message),
+                  Text(
+                    _message,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    _response.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
                   OutlinedButton(
                       onPressed: () {
                         setState(() {
@@ -145,7 +147,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.group_add_rounded,
                           color: Colors.black,
                           size: 100,
@@ -303,7 +305,7 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
                                               // If the button is pressed, return green, otherwise blue
                                               if (states.contains(
                                                   MaterialState.pressed)) {
-                                                return Color.fromARGB(
+                                                return const Color.fromARGB(
                                                     255, 81, 16, 93);
                                               }
                                               return Colors.black;

@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
-import 'package:http/http.dart' as http;
 import '../models/api_model.dart';
 import '../models/user_model.dart';
 import '../helpers/constants.dart';
@@ -27,10 +25,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
   final _lastNameFocusNode = FocusNode();
   final _emailTextController = TextEditingController();
   final _emailFocusNode = FocusNode();
-  // final _passwordTextController = TextEditingController();
-  // final _passwordFocusNode = FocusNode();
-  // final _confirmPasswordTextController = TextEditingController();
-  // final _confirmPasswordFocusNode = FocusNode();
   final _typeFocusNode = FocusNode();
   final api =
       ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
@@ -58,7 +52,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
       setState(() {
         _isProcessing = false;
       });
-      _socket.emit('user_update_successful', {'message': 'update users!'});
+      _socket.emit('_update_successful', resp);
       updateSuccess();
     } on Exception catch (e) {
       setState(() {
@@ -68,55 +62,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
       });
     }
   }
-
-  // Future<void> updateUser(String id, String firstName, String lastName,
-  //     String email, String password, String type, String token) async {
-  //   try {
-  //     print('${ApiConstants.baseUrl}${ApiConstants.port}/users/${_user.id}');
-
-  //     await http
-  //         .put(
-  //             Uri.parse(
-  //                 '${ApiConstants.baseUrl}${ApiConstants.port}/users/${_user.id}'),
-  //             headers: {
-  //               "Authorization": token,
-  //               "Content-Type": "application/json"
-  //             },
-  //             body: jsonEncode({
-  //               'firstName': firstName,
-  //               'lastName': lastName,
-  //               'email': email,
-  //               'password': password,
-  //               'type': type
-  //             }))
-  //         .then((response) {
-  //       if (response.statusCode == 200) {
-  //         setState(() {
-  //           _isProcessing = false;
-  //         });
-  //         _socket.emit('user_update_successful', {'message': 'update users!'});
-  //         Navigator.of(context).push(MaterialPageRoute(
-  //             builder: (context) => GetUserComponent(
-  //                   user: _user,
-  //                   jwt: _jwt,
-  //                   socket: _socket,
-  //                 )));
-  //       } else {
-  //         setState(() {
-  //           _isProcessing = false;
-  //           _error = true;
-  //         });
-  //         throw Exception('Failed to update new user.');
-  //       }
-  //     });
-  //   } on Exception catch (e) {
-  //     setState(() {
-  //       _isProcessing = false;
-  //       _error = true;
-  //       _message = e.toString();
-  //     });
-  //   }
-  // }
 
   void updateSuccess() {
     Navigator.of(context).push(MaterialPageRoute(
@@ -161,8 +106,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                     _firstNameFocusNode.unfocus();
                     _lastNameFocusNode.unfocus();
                     _emailFocusNode.unfocus();
-                    // _passwordFocusNode.unfocus();
-                    // _confirmPasswordFocusNode.unfocus();
                     _typeFocusNode.unfocus();
                   },
                   child: Padding(
@@ -176,7 +119,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                           TextFormField(
                             autocorrect: false,
                             initialValue: _user.firstName,
-                            //controller: _firstNameTextController,
                             focusNode: _firstNameFocusNode,
                             validator: (value) => Validator.validateName(
                               name: value,
@@ -195,7 +137,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                           TextFormField(
                             autocorrect: false,
                             initialValue: _user.lastName,
-                            //controller: _lastNameTextController,
                             focusNode: _lastNameFocusNode,
                             validator: (value) => Validator.validateName(
                               name: value,
@@ -214,7 +155,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                           TextFormField(
                             autocorrect: false,
                             initialValue: _user.email,
-                            //controller: _emailTextController,
                             focusNode: _emailFocusNode,
                             validator: (value) => Validator.validateEmail(
                               email: value,
@@ -230,38 +170,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                               labelStyle: TextStyle(),
                             ),
                           ),
-                          // TextFormField(
-                          //   autocorrect: false,
-                          //   initialValue: _user.password,
-                          //   //controller: _passwordTextController,
-                          //   focusNode: _passwordFocusNode,
-                          //   validator: (value) => Validator.validatePassword(
-                          //     password: value,
-                          //   ),
-                          //   onChanged: (value) {
-                          //     setState(() {
-                          //       _user.password = value;
-                          //     });
-                          //   },
-                          //   style: const TextStyle(),
-                          //   decoration: const InputDecoration(
-                          //     labelText: "Password",
-                          //     labelStyle: TextStyle(),
-                          //   ),
-                          // ),
-                          // TextFormField(
-                          //   autocorrect: false,
-                          //   controller: _confirmPasswordTextController,
-                          //   focusNode: _confirmPasswordFocusNode,
-                          //   validator: (value) => Validator.validatePassword(
-                          //     password: value,
-                          //   ),
-                          //   style: const TextStyle(),
-                          //   decoration: const InputDecoration(
-                          //     labelText: "Confirm Password",
-                          //     labelStyle: TextStyle(),
-                          //   ),
-                          // ),
                           DropdownButtonFormField(
                             value: _user.type,
                             items: dropdownItems,
@@ -295,8 +203,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                                             _firstNameFocusNode.unfocus();
                                             _lastNameFocusNode.unfocus();
                                             _emailFocusNode.unfocus();
-                                            // _passwordFocusNode.unfocus();
-                                            // _confirmPasswordFocusNode.unfocus();
                                             _typeFocusNode.unfocus();
                                             if (_createUserFormKey.currentState!
                                                 .validate()) {
@@ -304,14 +210,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                                                 _isProcessing = true;
                                               });
                                               await updateOneUser(_user);
-                                              // await updateUser(
-                                              //     _user.id,
-                                              //     _user.firstName,
-                                              //     _user.lastName,
-                                              //     _user.email,
-                                              //     _passwordTextController.text,
-                                              //     _user.type,
-                                              //     _jwt);
                                             }
                                           },
                                           child: const Text(
@@ -339,8 +237,6 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                                 _firstNameTextController.text = "";
                                 _lastNameTextController.text = "";
                                 _emailTextController.text = "";
-                                // _passwordTextController.text = "";
-                                // _confirmPasswordTextController.text = "";
                                 _response = {};
                               });
                             },

@@ -59,8 +59,8 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => GetAllUsersComponent(
+                            user: _user,
                             jwt: _jwt,
-                            id: _user.id,
                             socket: _socket,
                           )));
                 },

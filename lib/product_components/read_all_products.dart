@@ -1,12 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/product_components/create_product.dart';
 import 'package:glowing_octo_lamp/product_components/delete_product.dart';
 import 'package:glowing_octo_lamp/product_components/read_one_product.dart';
 import 'package:glowing_octo_lamp/user_components/user_menu.dart';
-import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../helpers/constants.dart';
+import '../models/api_model.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 
@@ -30,6 +29,8 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
   bool _error = false;
   String _message = "";
   List<Product> _response = [];
+  final api =
+      ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
 
   @override
   void initState() {
@@ -37,41 +38,29 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
     _jwt = widget.jwt;
     _socket = widget.socket;
     _socket.on("update_product_list", (data) {
-      getAllProduct();
+      getAllProd();
     });
-    getAllProduct();
+    getAllProd();
     super.initState();
   }
 
-  Future<void> getAllProduct() async {
+  Future<void> getAllProd() async {
     try {
-      await http.get(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/products/'),
-        headers: {"Content-Type": "application/json"},
-      ).then((response) {
-        final parsed =
-            (jsonDecode(response.body) as List).cast<Map<String, dynamic>>();
-        if (response.statusCode == 200) {
-          setState(() {
-            _isProcessing = false;
-            _response =
-                parsed.map<Product>((json) => Product.fromJson(json)).toList();
-          });
-        } else {
-          setState(() {
-            _isProcessing = false;
-            _error = true;
-            _response =
-                parsed.map<Product>((json) => Product.fromJson(json)).toList();
-          });
-          throw Exception('Failed to get all products.');
-        }
+      final resp = await api.getAll("products/", _jwt, _socket);
+      final parsed = (resp['products'] as List).cast<Map<String, dynamic>>();
+      final map =
+          parsed.map<Product>((json) => Product.fromJson(json)).toList();
+      setState(() {
+        _response = map;
+        _error = false;
+        _message = "Found users!";
+        _isProcessing = false;
       });
     } on Exception catch (e) {
       setState(() {
-        _isProcessing = false;
         _error = true;
         _message = e.toString();
+        _isProcessing = false;
       });
     }
   }

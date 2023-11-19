@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
 import '../models/user_model.dart';
 import './delete_user.dart';
 import '../helpers/constants.dart';
@@ -9,9 +10,9 @@ import '../models/api_model.dart';
 
 class GetAllUsersComponent extends StatefulWidget {
   const GetAllUsersComponent(
-      {super.key, required this.jwt, required this.id, required this.socket});
+      {super.key, required this.user, required this.jwt, required this.socket});
+  final User user;
   final String jwt;
-  final String id;
   final IO.Socket socket;
 
   @override
@@ -19,8 +20,8 @@ class GetAllUsersComponent extends StatefulWidget {
 }
 
 class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
+  late User _user;
   late String _jwt;
-  late String _id;
   late IO.Socket _socket;
   bool _update = false;
   bool _isProcessing = true;
@@ -29,6 +30,18 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   List<User> _response = [];
   final api =
       ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
+
+  @override
+  void initState() {
+    _user = widget.user;
+    _jwt = widget.jwt;
+    _socket = widget.socket;
+    _socket.on("update_users_list", (data) {
+      getAllUsers();
+    });
+    getAllUsers();
+    super.initState();
+  }
 
   Future<void> getAllUsers() async {
     try {
@@ -48,18 +61,6 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
         _isProcessing = false;
       });
     }
-  }
-
-  @override
-  void initState() {
-    _jwt = widget.jwt;
-    _id = widget.id;
-    _socket = widget.socket;
-    _socket.on("update_users_list", (data) {
-      getAllUsers();
-    });
-    getAllUsers();
-    super.initState();
   }
 
   @override
@@ -85,9 +86,19 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                             itemCount: _response.length,
                             itemBuilder: (BuildContext context, int index) {
                               User user = _response[index];
-                              return user.id == _id
+                              return user.id == _user.id
                                   ? const SizedBox()
                                   : ListTile(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    GetUserComponent(
+                                                      jwt: _jwt,
+                                                      user: user,
+                                                      socket: _socket,
+                                                    )));
+                                      },
                                       isThreeLine: true,
                                       title: Text(
                                           '${user.firstName} ${user.lastName}'),

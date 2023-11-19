@@ -6,6 +6,7 @@ import 'package:glowing_octo_lamp/product_components/update_product.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../helpers/constants.dart';
+import '../models/api_model.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 
@@ -35,43 +36,34 @@ class _ProductDetailComponentState extends State<ProductDetailComponent> {
   bool _error = false;
   String _message = "";
   Map<String, dynamic> _response = {};
+  final api =
+      ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
 
   @override
   void initState() {
     super.initState();
     _id = widget.id;
+    _user = widget.user;
+    _jwt = widget.jwt;
     _socket = widget.socket;
     getProductById(_id);
   }
 
-  Future<void> getProductById(String id) async {
+  Future<void> getProductById(id) async {
     try {
-      await http.get(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/products/$id'),
-        headers: {"Content-Type": "application/json"},
-      ).then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            _isProcessing = false;
-            _response = json.decode(response.body);
-            _product = Product.fromJson(_response);
-          });
-        } else {
-          setState(() {
-            _isProcessing = false;
-            _error = true;
-            _response = json.decode(response.body);
-          });
-          throw Exception('Failed to get product.');
-        }
+      final resp = await api.getOne("products/$_id", _jwt, _socket);
+      setState(() {
+        _response = resp;
+        _product = Product.fromJson(_response['product']);
+        _error = false;
+        _message = "Found a product!";
+        _isProcessing = false;
       });
     } on Exception catch (e) {
       setState(() {
-        _user = widget.user;
-        _jwt = widget.jwt;
-        _isProcessing = false;
         _error = true;
         _message = e.toString();
+        _isProcessing = false;
       });
     }
   }

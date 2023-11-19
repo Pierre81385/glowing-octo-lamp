@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const Product = require("../models/ProductModel");
+const authenticateToken = require("../utils/jwtVerify");
 
 //create new product
-router.route("/create").post(async (req, res) => {
+router.route("/create").post(authenticateToken, async (req, res) => {
   const product = req.body;
   const productExists = await Product.findOne({ name: product.name });
 
@@ -30,21 +31,25 @@ router.route("/create").post(async (req, res) => {
 });
 
 //read all
-router.route("/").get((req, res) => {
+router.route("/").get(authenticateToken, (req, res) => {
   Product.find()
-    .then((products) => res.status(200).json(products))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .then((products) =>
+      res.status(200).json({ message: "Found products!!", products: products })
+    )
+    .catch((err) => res.status(400).json({ message: err }));
 });
 
 //read one
-router.route("/:id").get((req, res) => {
+router.route("/:id").get(authenticateToken, (req, res) => {
   Product.findById(req.params.id)
-    .then((prod) => res.status(200).json(prod))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .then((product) =>
+      res.status(200).json({ message: "Found product!", product: product })
+    )
+    .catch((err) => res.status(400).json({ message: err }));
 });
 
 //update
-router.route("/:id").put(async (req, res) => {
+router.route("/:id").put(authenticateToken, async (req, res) => {
   const product = req.body;
 
   const newProduct = new Product({
@@ -70,15 +75,15 @@ router.route("/:id").put(async (req, res) => {
     }
   )
     .then(() => {
-      res.status(200).json("Success!");
+      res.status(200).json({ message: "Product updated!" });
     })
     .catch((err) => {
-      res.status(400).json("Error: " + err);
+      res.status(400).json({ message: err });
     });
 });
 
 //delete
-router.route("/:id").delete((req, res) => {
+router.route("/:id").delete(authenticateToken, (req, res) => {
   const { id } = req.params;
   Product.findByIdAndDelete(id)
     .then(() => {

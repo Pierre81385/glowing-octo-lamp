@@ -44,6 +44,7 @@ class _GetUserComponentState extends State<GetUserComponent> {
       final resp = await api.getAll("users/$id", _jwt, _socket);
       setState(() {
         _response = resp;
+        _user = User.fromJson(_response['user']);
         _error = false;
         _message = "Found users!";
         _isProcessing = false;
@@ -85,12 +86,7 @@ class _GetUserComponentState extends State<GetUserComponent> {
                             Text('Permission level: ${_user.type}'),
                             OutlinedButton(
                                 onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => UserMenuComponent(
-                                            user: _user,
-                                            jwt: _jwt,
-                                            socket: _socket,
-                                          )));
+                                  Navigator.of(context).pop();
                                 },
                                 child: const Text('Back')),
                             _user.type == "Limited"

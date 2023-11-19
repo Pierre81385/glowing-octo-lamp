@@ -21,9 +21,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> getOne(
-      String endpoint, String auth, String param, IO.Socket socket) async {
+      String endpoint, String auth, IO.Socket socket) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/$endpoint/$param'),
+      Uri.parse('$baseUrl/$endpoint/'),
       headers: {"Authorization": auth, "Content-Type": "application/json"},
     );
 
@@ -39,6 +39,22 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$baseUrl/$endpoint'),
       headers: {"Content-Type": "application/json"},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      print(response.body);
+      throw Exception('Failed to create data');
+    }
+  }
+
+  Future<Map<String, dynamic>> createWithAUth(String endpoint,
+      Map<String, dynamic> data, String auth, IO.Socket socket) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: {"Authorization": auth, "Content-Type": "application/json"},
       body: json.encode(data),
     );
 
