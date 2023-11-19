@@ -6,6 +6,7 @@ import '../models/order_model.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 import '../user_components/user_menu.dart';
+import 'read_all_orders.dart';
 
 class CreateOrderComponent extends StatefulWidget {
   const CreateOrderComponent(
@@ -32,7 +33,29 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
   List<Product> _responseList = [];
   Map<String, dynamic> _responseObject = {};
   List<Map<String, dynamic>> _cart = [];
+  List<Map<String, dynamic>> _finalCart = [];
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  final List<String> orderStatusOptions = [
+    'sent',
+    'received',
+    'processing',
+    'complete'
+  ];
+
+  // Uppercase Letters
+  List<String> uppercaseLetters = List.generate(
+      26, (index) => String.fromCharCode('A'.codeUnitAt(0) + index));
+
+  // Lowercase Letters
+  List<String> lowercaseLetters = List.generate(
+      26, (index) => String.fromCharCode('a'.codeUnitAt(0) + index));
+
+  // Single Digit Numbers
+  List<String> singleDigitNumbers =
+      List.generate(10, (index) => index.toString());
+
+  // Combine all lists into a single list
+  List<String> combinedList = [];
 
   @override
   void initState() {
@@ -40,10 +63,25 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
     _user = widget.user;
     _jwt = widget.jwt;
     _socket = widget.socket;
+    combinedList.addAll(uppercaseLetters);
+    combinedList.addAll(lowercaseLetters);
+    combinedList.addAll(singleDigitNumbers);
     getAllProd();
     _socket.on("update_product_list", (data) {
       getAllProd();
     });
+  }
+
+  String generateShuffledString(List<String> inputList, int length) {
+    List<String> shuffledList = List.from(inputList);
+
+    shuffledList.shuffle();
+
+    List<String> selectedCharacters = shuffledList.sublist(0, length);
+
+    String shuffledString = selectedCharacters.join('');
+
+    return shuffledString;
   }
 
   Future<void> getAllProd() async {
@@ -89,13 +127,12 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
   }
 
   void success() {
-    // Navigator.of(context).push(MaterialPageRoute(
-    //     builder: (context) =>
-    //     GetAllOrdersComponent(
-    //           user: _user,
-    //           jwt: _jwt,
-    //           socket: _socket,
-    //         )));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => GetAllOrdersComponent(
+              user: _user,
+              jwt: _jwt,
+              socket: _socket,
+            )));
   }
 
   @override
@@ -109,7 +146,7 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(),
-            child: Text('My Cart'),
+            child: Text('Review Cart'),
           ),
           ListView.builder(
               shrinkWrap: true,
@@ -138,6 +175,24 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
                         ),
                       );
               }),
+          OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  _isProcessing = true;
+                  for (var i = 0; i < _cart.length; i++) {
+                    if (_cart[i]['count'] > 0) {
+                      _finalCart.add(_cart[i]);
+                    }
+                  }
+                });
+                createOrder({
+                  'placedBy': _user.email,
+                  'orderItems': _finalCart,
+                  'orderNumber': generateShuffledString(combinedList, 10),
+                  'orderStatus': orderStatusOptions[0]
+                });
+              },
+              child: Text('Submit'))
         ],
       )),
       body: SafeArea(
@@ -176,6 +231,11 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
                         Text(
                           'Object response: ${_responseObject.toString()}',
                         ),
+                        OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Back')),
                       ],
                     ),
                   )

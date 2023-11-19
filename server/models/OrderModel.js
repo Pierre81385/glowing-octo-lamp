@@ -7,7 +7,16 @@ const orderSchema = new Schema({
     required: [true, "User ID is required for this field."],
   },
   orderItems: {
-    type: [{ type: String }],
+    type: [
+      {
+        id: {
+          type: String,
+        },
+        count: {
+          type: Number,
+        },
+      },
+    ],
   },
   orderNumber: {
     type: String,
@@ -17,7 +26,7 @@ const orderSchema = new Schema({
     type: String,
     required: [
       true,
-      "Please set order status ['received', 'processing', 'complete']",
+      "Please set order status ['sent', 'received', 'processing', 'complete']",
     ],
   },
 });

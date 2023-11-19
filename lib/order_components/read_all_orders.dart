@@ -48,6 +48,7 @@ class _GetAllOrdersComponentState extends State<GetAllOrdersComponent> {
   Future<void> getAllOrders() async {
     try {
       final resp = await api.getAll("orders/", _jwt, _socket);
+      print(resp);
       final parsed = (resp['orders'] as List).cast<Map<String, dynamic>>();
       final map = parsed.map<Order>((json) => Order.fromJson(json)).toList();
       setState(() {
@@ -140,6 +141,7 @@ class _GetAllOrdersComponentState extends State<GetAllOrdersComponent> {
                             itemCount: _response.length,
                             itemBuilder: (BuildContext context, int index) {
                               Order order = _response[index];
+
                               return ListTile(
                                   onTap: () {
                                     // Navigator.of(context).push(
@@ -153,9 +155,19 @@ class _GetAllOrdersComponentState extends State<GetAllOrdersComponent> {
                                     //             )));
                                   },
                                   isThreeLine: true,
-                                  leading: Text('status: ${order.orderStatus}'),
-                                  title: Text('getOneUserByID'),
-                                  subtitle: Text(order.orderNumber),
+                                  leading: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        order.orderStatus,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  title: Text(order.placedBy),
+                                  subtitle: Text(
+                                      'Order Number: ${order.orderNumber}'),
                                   trailing: Text('Cancel Order')
                                   // DeleteProductComponent(
                                   //   id: order.id,
