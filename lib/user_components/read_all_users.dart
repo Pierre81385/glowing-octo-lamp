@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
 import '../models/user_model.dart';
@@ -23,7 +21,6 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
   late User _user;
   late String _jwt;
   late IO.Socket _socket;
-  bool _update = false;
   bool _isProcessing = true;
   bool _error = false;
   String _message = "";
@@ -97,13 +94,19 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                   )
                 : Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Back')),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                icon: const Icon(
+                                    Icons.arrow_back_ios_new_outlined)),
+                          ),
+                        ],
                       ),
                       Expanded(
                         child: ListView.builder(
@@ -121,6 +124,7 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                                                     GetUserComponent(
                                                       jwt: _jwt,
                                                       user: user,
+                                                      currentUser: _user,
                                                       socket: _socket,
                                                     )));
                                       },

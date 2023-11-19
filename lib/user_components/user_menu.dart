@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/home.dart';
+import 'package:glowing_octo_lamp/order_components/read_all_orders.dart';
 import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
 import 'package:glowing_octo_lamp/user_components/read_all_users.dart';
 import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
@@ -48,6 +49,7 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                         builder: (context) => GetUserComponent(
                               jwt: _jwt,
                               user: _user,
+                              currentUser: _user,
                               socket: _socket,
                             )));
                   },
@@ -78,7 +80,7 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
             ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => GetAllProductsComponent(
+                      builder: (context) => GetAllOrdersComponent(
                             user: _user,
                             jwt: _jwt,
                             socket: _socket,

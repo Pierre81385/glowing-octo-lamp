@@ -69,132 +69,122 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: _isProcessing
-              ? SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    children: [
-                      const CircularProgressIndicator(),
-                      Row(
-                        children: [
-                          OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Back')),
-                          OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        CreateProductComponent(
-                                          user: _user,
-                                          jwt: _jwt,
-                                          socket: _socket,
-                                        )));
-                              },
-                              child: const Text('Add Product processing')),
-                        ],
-                      )
-                    ],
-                  ),
-                )
-              : _error
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        children: [
-                          Text(
-                            _message,
-                          ),
-                          Text(
-                            _response.toString(),
-                          ),
-                          OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => UserMenuComponent(
-                                          user: _user,
-                                          jwt: _jwt,
-                                          socket: _socket,
-                                        )));
-                              },
-                              child: const Text('Back')),
-                        ],
-                      ),
-                    )
-                  : Column(
+        child: _isProcessing
+            ? SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    const CircularProgressIndicator(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                UserMenuComponent(
-                                                  user: _user,
-                                                  jwt: _jwt,
-                                                  socket: _socket,
-                                                )));
-                                  },
-                                  child: const Text('Back')),
-                              OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CreateProductComponent(
-                                                  user: _user,
-                                                  jwt: _jwt,
-                                                  socket: _socket,
-                                                )));
-                                  },
-                                  child: const Text('Add Product')),
-                            ],
-                          ),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            icon:
+                                const Icon(Icons.arrow_back_ios_new_outlined)),
+                      ],
+                    )
+                  ],
+                ),
+              )
+            : _error
+                ? SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      children: [
+                        Text(
+                          _message,
                         ),
-                        Expanded(
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: _response.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                Product product = _response[index];
-                                return ListTile(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  GetProductComponent(
-                                                    id: product.id,
-                                                    user: _user,
-                                                    jwt: _jwt,
-                                                    socket: _socket,
-                                                  )));
-                                    },
-                                    isThreeLine: true,
-                                    leading: Text(
-                                        'qty: ${product.count.toString()}'),
-                                    title: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(product.name),
-                                        Text('\$${product.price.toString()}')
-                                      ],
-                                    ),
-                                    subtitle: Text(product.description),
-                                    trailing: DeleteProductComponent(
-                                      id: product.id,
+                        Text(
+                          _response.toString(),
+                        ),
+                        OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => UserMenuComponent(
+                                        user: _user,
+                                        jwt: _jwt,
+                                        socket: _socket,
+                                      )));
+                            },
+                            child: const Text('Back')),
+                      ],
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => UserMenuComponent(
+                                            user: _user,
+                                            jwt: _jwt,
+                                            socket: _socket,
+                                          )));
+                                },
+                                icon: const Icon(
+                                    Icons.arrow_back_ios_new_outlined)),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _response.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Product product = _response[index];
+                              return ListTile(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                GetProductComponent(
+                                                  id: product.id,
+                                                  user: _user,
+                                                  jwt: _jwt,
+                                                  socket: _socket,
+                                                )));
+                                  },
+                                  isThreeLine: true,
+                                  leading:
+                                      Text('qty: ${product.count.toString()}'),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(product.name),
+                                      Text('\$${product.price.toString()}')
+                                    ],
+                                  ),
+                                  subtitle: Text(product.description),
+                                  trailing: DeleteProductComponent(
+                                    id: product.id,
+                                    jwt: _jwt,
+                                    socket: _socket,
+                                  ) //delete component here,
+                                  );
+                            }),
+                      ),
+                      OutlinedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => CreateProductComponent(
+                                      user: _user,
                                       jwt: _jwt,
                                       socket: _socket,
-                                    ) //delete component here,
-                                    );
-                              }),
-                        ),
-                      ],
-                    )),
+                                    )));
+                          },
+                          child: const Text('New Product')),
+                    ],
+                  ),
+      ),
     );
   }
 }

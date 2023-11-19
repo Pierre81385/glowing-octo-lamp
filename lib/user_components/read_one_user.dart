@@ -7,9 +7,14 @@ import '../helpers/constants.dart';
 
 class GetUserComponent extends StatefulWidget {
   const GetUserComponent(
-      {super.key, required this.jwt, required this.user, required this.socket});
+      {super.key,
+      required this.jwt,
+      required this.user,
+      required this.currentUser,
+      required this.socket});
   final String jwt;
   final User user;
+  final User currentUser;
   final IO.Socket socket;
 
   @override
@@ -19,6 +24,7 @@ class GetUserComponent extends StatefulWidget {
 class _GetUserComponentState extends State<GetUserComponent> {
   late String _jwt;
   late User _user;
+  late User _currentUser;
   late IO.Socket _socket;
   final api =
       ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
@@ -31,6 +37,7 @@ class _GetUserComponentState extends State<GetUserComponent> {
   void initState() {
     _jwt = widget.jwt;
     _user = widget.user;
+    _currentUser = widget.currentUser;
     _socket = widget.socket;
     getUserById(_user.id);
     super.initState();
@@ -94,32 +101,40 @@ class _GetUserComponentState extends State<GetUserComponent> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Column(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('${_user.firstName} ${_user.lastName}'),
-                              Text(_user.email),
-                              Text('Permission level: ${_user.type}'),
-                              OutlinedButton(
+                              IconButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text('Back')),
-                              _user.type == "Limited"
-                                  ? const SizedBox()
-                                  : OutlinedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    UpdateUserComponent(
-                                                      user: _user,
-                                                      jwt: _jwt,
-                                                      socket: _socket,
-                                                    )));
-                                      },
-                                      child: const Text('Update'))
+                                  icon: const Icon(
+                                      Icons.arrow_back_ios_new_outlined)),
                             ],
                           ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text('${_user.firstName} ${_user.lastName}'),
+                                Text(_user.email),
+                                Text('Permission level: ${_user.type}'),
+                              ],
+                            ),
+                          ),
+                          _user.type == "Limited" || _user.id != _currentUser.id
+                              ? const SizedBox()
+                              : OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                UpdateUserComponent(
+                                                  user: _user,
+                                                  jwt: _jwt,
+                                                  socket: _socket,
+                                                )));
+                                  },
+                                  child: const Text('Update'))
                         ],
                       ),
                     )),

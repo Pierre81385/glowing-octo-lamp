@@ -67,6 +67,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => GetUserComponent(
               user: _user,
+              currentUser: _user,
               jwt: _jwt,
               socket: _socket,
             )));

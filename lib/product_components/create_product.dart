@@ -157,132 +157,140 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
                 child: Form(
                   key: _createProductFormKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Add Product'),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _nameTextController,
-                        focusNode: _nameFocusNode,
-                        validator: (value) => Validator.validateName(
-                          name: value,
-                        ),
-                        style: const TextStyle(),
-                        decoration: const InputDecoration(
-                          labelText: "Name",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _descriptionTextController,
-                        focusNode: _descriptionFocusNode,
-                        validator: (value) => Validator.validateName(
-                          name: value,
-                        ),
-                        style: const TextStyle(),
-                        decoration: const InputDecoration(
-                          labelText: "Description",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _priceTextController,
-                        focusNode: _priceFocusNode,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp('[0-9.,]'))
-                        ],
-                        style: const TextStyle(),
-                        decoration: const InputDecoration(
-                          labelText: "Price (numbers only)",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      TextFormField(
-                        autocorrect: false,
-                        controller: _countTextController,
-                        focusNode: _countFocusNode,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: false),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp('[0-9.,]'))
-                        ],
-                        style: const TextStyle(),
-                        decoration: const InputDecoration(
-                          labelText: "Count (numbers only)",
-                          labelStyle: TextStyle(),
-                        ),
-                      ),
-                      DropdownButtonFormField(
-                        value: _selectedtype,
-                        items: dropdownItems,
-                        focusNode: _categoryFocusNode,
-                        style: const TextStyle(),
-                        decoration: const InputDecoration(
-                          labelText: "Permission Level",
-                          labelStyle: TextStyle(),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedtype = value!;
-                          });
-                        },
-                      ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: OutlinedButton(
+                            child: IconButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text(
-                                  'Back',
-                                  style: TextStyle(color: Colors.black),
-                                )),
+                                icon: const Icon(
+                                    Icons.arrow_back_ios_new_outlined)),
                           ),
-                          _isProcessing
-                              ? const CircularProgressIndicator()
-                              : Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: OutlinedButton(
-                                      onPressed: () async {
-                                        _nameFocusNode.unfocus();
-                                        _descriptionFocusNode.unfocus();
-                                        _priceFocusNode.unfocus();
-                                        _countFocusNode.unfocus();
-                                        _categoryFocusNode.unfocus();
-                                        double priceDouble = double.tryParse(
-                                                _priceTextController.text) ??
-                                            0.0;
-                                        int countInt = int.parse(
-                                            _countTextController.text);
-                                        if (_createProductFormKey.currentState!
-                                            .validate()) {
-                                          setState(() {
-                                            _isProcessing = true;
-                                          });
-                                          await createProduct({
-                                            "name": _nameTextController.text,
-                                            "description":
-                                                _descriptionTextController.text,
-                                            "price": priceDouble,
-                                            "count": countInt,
-                                            "category": _selectedtype
-                                          });
-                                        }
-                                      },
-                                      child: const Text(
-                                        'Submit',
-                                        style: TextStyle(color: Colors.black),
-                                      )),
-                                ),
                         ],
-                      )
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Add Product'),
+                            TextFormField(
+                              autocorrect: false,
+                              controller: _nameTextController,
+                              focusNode: _nameFocusNode,
+                              validator: (value) => Validator.validateName(
+                                name: value,
+                              ),
+                              style: const TextStyle(),
+                              decoration: const InputDecoration(
+                                labelText: "Name",
+                                labelStyle: TextStyle(),
+                              ),
+                            ),
+                            TextFormField(
+                              autocorrect: false,
+                              controller: _descriptionTextController,
+                              focusNode: _descriptionFocusNode,
+                              validator: (value) => Validator.validateName(
+                                name: value,
+                              ),
+                              style: const TextStyle(),
+                              decoration: const InputDecoration(
+                                labelText: "Description",
+                                labelStyle: TextStyle(),
+                              ),
+                            ),
+                            TextFormField(
+                              autocorrect: false,
+                              controller: _priceTextController,
+                              focusNode: _priceFocusNode,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp('[0-9.,]'))
+                              ],
+                              style: const TextStyle(),
+                              decoration: const InputDecoration(
+                                labelText: "Price (numbers only)",
+                                labelStyle: TextStyle(),
+                              ),
+                            ),
+                            TextFormField(
+                              autocorrect: false,
+                              controller: _countTextController,
+                              focusNode: _countFocusNode,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: false),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp('[0-9.,]'))
+                              ],
+                              style: const TextStyle(),
+                              decoration: const InputDecoration(
+                                labelText: "Count (numbers only)",
+                                labelStyle: TextStyle(),
+                              ),
+                            ),
+                            DropdownButtonFormField(
+                              value: _selectedtype,
+                              items: dropdownItems,
+                              focusNode: _categoryFocusNode,
+                              style: const TextStyle(),
+                              decoration: const InputDecoration(
+                                labelText: "Permission Level",
+                                labelStyle: TextStyle(),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedtype = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      _isProcessing
+                          ? const CircularProgressIndicator()
+                          : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OutlinedButton(
+                                  onPressed: () async {
+                                    _nameFocusNode.unfocus();
+                                    _descriptionFocusNode.unfocus();
+                                    _priceFocusNode.unfocus();
+                                    _countFocusNode.unfocus();
+                                    _categoryFocusNode.unfocus();
+                                    double priceDouble = double.tryParse(
+                                            _priceTextController.text) ??
+                                        0.0;
+                                    int countInt =
+                                        int.parse(_countTextController.text);
+                                    if (_createProductFormKey.currentState!
+                                        .validate()) {
+                                      setState(() {
+                                        _isProcessing = true;
+                                      });
+                                      await createProduct({
+                                        "name": _nameTextController.text,
+                                        "description":
+                                            _descriptionTextController.text,
+                                        "price": priceDouble,
+                                        "count": countInt,
+                                        "category": _selectedtype
+                                      });
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Submit',
+                                    style: TextStyle(color: Colors.black),
+                                  )),
+                            ),
                     ],
                   ),
                 ),

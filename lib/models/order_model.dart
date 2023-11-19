@@ -16,6 +16,16 @@ class Order {
       required this.orderNumber,
       required this.orderStatus});
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'placedBy': placedBy,
+      'orderItems': orderItems,
+      'orderNumber': orderNumber,
+      'orderStatus': orderStatus
+    };
+  }
+
   factory Order.fromJson(Map<String, dynamic> order) {
     return Order(
         id: order['_id'],

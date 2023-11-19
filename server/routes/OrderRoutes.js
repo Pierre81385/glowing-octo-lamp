@@ -22,15 +22,19 @@ router.route("/create").post(async (req, res) => {
 //read all
 router.route("/").get((req, res) => {
   Order.find()
-    .then((orders) => res.status(200).json(orders))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .then((orders) =>
+      res.status(200).json({ message: "Found orders!", orders: orders })
+    )
+    .catch((err) => res.status(400).json({ message: err }));
 });
 
 //read one
 router.route("/:id").get((req, res) => {
   Order.findById(req.params.id)
-    .then((order) => res.status(200).json(order))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .then((order) =>
+      res.status(200).json({ message: "Found order!", order: order })
+    )
+    .catch((err) => res.status(400).json({ message: err }));
 });
 
 //update

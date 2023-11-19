@@ -159,144 +159,149 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
                     child: Form(
                       key: _updateProductFormKey,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Update Product'),
-                          TextFormField(
-                            autocorrect: false,
-                            initialValue: _product.name,
-                            //controller: _nameTextController,
-                            focusNode: _nameFocusNode,
-                            validator: (value) => Validator.validateName(
-                              name: value,
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                _product.name = value;
-                              });
-                            },
-                            style: const TextStyle(),
-                            decoration: const InputDecoration(
-                              labelText: "Name",
-                              labelStyle: TextStyle(),
-                            ),
-                          ),
-                          TextFormField(
-                            autocorrect: false,
-                            initialValue: _product.description,
-                            //controller: _descriptionTextController,
-                            focusNode: _descriptionFocusNode,
-                            validator: (value) => Validator.validateName(
-                              name: value,
-                            ),
-                            onChanged: (value) {
-                              _product.description = value;
-                            },
-                            style: const TextStyle(),
-                            decoration: const InputDecoration(
-                              labelText: "Description",
-                              labelStyle: TextStyle(),
-                            ),
-                          ),
-                          TextFormField(
-                            autocorrect: false,
-                            initialValue: _product.price.toString(),
-                            //controller: _priceTextController,
-                            focusNode: _priceFocusNode,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp('[0-9.,]'))
-                            ],
-                            onChanged: (value) {
-                              _product.price = double.tryParse(value) ?? 0.0;
-                            },
-                            style: const TextStyle(),
-                            decoration: const InputDecoration(
-                              labelText: "Price (numbers only)",
-                              labelStyle: TextStyle(),
-                            ),
-                          ),
-                          TextFormField(
-                            autocorrect: false,
-                            initialValue: _product.count.toString(),
-                            //controller: _countTextController,
-                            focusNode: _countFocusNode,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: false),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp('[0-9.,]'))
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                _product.count = int.parse(value);
-                              });
-                            },
-                            style: const TextStyle(),
-                            decoration: const InputDecoration(
-                              labelText: "Count (numbers only)",
-                              labelStyle: TextStyle(),
-                            ),
-                          ),
-                          DropdownButtonFormField(
-                            value: _product.category,
-                            items: dropdownItems,
-                            focusNode: _categoryFocusNode,
-                            style: const TextStyle(),
-                            decoration: const InputDecoration(
-                              labelText: "Permission Level",
-                              labelStyle: TextStyle(),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                _product.category = value!;
-                              });
-                            },
-                          ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: OutlinedButton(
+                                child: IconButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: const Text(
-                                      'Back',
-                                      style: TextStyle(color: Colors.black),
-                                    )),
+                                    icon: const Icon(
+                                        Icons.arrow_back_ios_new_outlined)),
                               ),
-                              _isProcessing
-                                  ? const CircularProgressIndicator()
-                                  : Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: OutlinedButton(
-                                          onPressed: () async {
-                                            _nameFocusNode.unfocus();
-                                            _descriptionFocusNode.unfocus();
-                                            _priceFocusNode.unfocus();
-                                            _countFocusNode.unfocus();
-                                            _categoryFocusNode.unfocus();
-                                            if (_updateProductFormKey
-                                                .currentState!
-                                                .validate()) {
-                                              setState(() {
-                                                _isProcessing = true;
-                                              });
-                                              await updateOneProduct(_product);
-                                            }
-                                          },
-                                          child: const Text(
-                                            'Submit',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )),
-                                    ),
                             ],
-                          )
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text('Update Product'),
+                                TextFormField(
+                                  autocorrect: false,
+                                  initialValue: _product.name,
+                                  //controller: _nameTextController,
+                                  focusNode: _nameFocusNode,
+                                  validator: (value) => Validator.validateName(
+                                    name: value,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _product.name = value;
+                                    });
+                                  },
+                                  style: const TextStyle(),
+                                  decoration: const InputDecoration(
+                                    labelText: "Name",
+                                    labelStyle: TextStyle(),
+                                  ),
+                                ),
+                                TextFormField(
+                                  autocorrect: false,
+                                  initialValue: _product.description,
+                                  //controller: _descriptionTextController,
+                                  focusNode: _descriptionFocusNode,
+                                  validator: (value) => Validator.validateName(
+                                    name: value,
+                                  ),
+                                  onChanged: (value) {
+                                    _product.description = value;
+                                  },
+                                  style: const TextStyle(),
+                                  decoration: const InputDecoration(
+                                    labelText: "Description",
+                                    labelStyle: TextStyle(),
+                                  ),
+                                ),
+                                TextFormField(
+                                  autocorrect: false,
+                                  initialValue: _product.price.toString(),
+                                  //controller: _priceTextController,
+                                  focusNode: _priceFocusNode,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp('[0-9.,]'))
+                                  ],
+                                  onChanged: (value) {
+                                    _product.price =
+                                        double.tryParse(value) ?? 0.0;
+                                  },
+                                  style: const TextStyle(),
+                                  decoration: const InputDecoration(
+                                    labelText: "Price (numbers only)",
+                                    labelStyle: TextStyle(),
+                                  ),
+                                ),
+                                TextFormField(
+                                  autocorrect: false,
+                                  initialValue: _product.count.toString(),
+                                  //controller: _countTextController,
+                                  focusNode: _countFocusNode,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: false),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp('[0-9.,]'))
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _product.count = int.parse(value);
+                                    });
+                                  },
+                                  style: const TextStyle(),
+                                  decoration: const InputDecoration(
+                                    labelText: "Count (numbers only)",
+                                    labelStyle: TextStyle(),
+                                  ),
+                                ),
+                                DropdownButtonFormField(
+                                  value: _product.category,
+                                  items: dropdownItems,
+                                  focusNode: _categoryFocusNode,
+                                  style: const TextStyle(),
+                                  decoration: const InputDecoration(
+                                    labelText: "Permission Level",
+                                    labelStyle: TextStyle(),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _product.category = value!;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          _isProcessing
+                              ? const CircularProgressIndicator()
+                              : Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: OutlinedButton(
+                                      onPressed: () async {
+                                        _nameFocusNode.unfocus();
+                                        _descriptionFocusNode.unfocus();
+                                        _priceFocusNode.unfocus();
+                                        _countFocusNode.unfocus();
+                                        _categoryFocusNode.unfocus();
+                                        if (_updateProductFormKey.currentState!
+                                            .validate()) {
+                                          setState(() {
+                                            _isProcessing = true;
+                                          });
+                                          await updateOneProduct(_product);
+                                        }
+                                      },
+                                      child: const Text(
+                                        'Submit',
+                                        style: TextStyle(color: Colors.black),
+                                      )),
+                                ),
                         ],
                       ),
                     ),

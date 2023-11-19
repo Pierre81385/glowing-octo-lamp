@@ -110,35 +110,42 @@ class _GetProductComponentState extends State<GetProductComponent> {
                   : SizedBox(
                       width: double.infinity,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            children: [
-                              Text('category: ${_product.category}'),
-                              Text(_product.name),
-                              Text(_product.description),
-                              Text('\$${_product.price.toString()}'),
-                              Text('qty: ${_product.count.toString()}'),
-                              OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Back')),
-                              OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                UpdateProductComponent(
-                                                  user: _user,
-                                                  product: _product,
-                                                  jwt: _jwt,
-                                                  socket: _socket,
-                                                )));
-                                  },
-                                  child: const Text('Update'))
-                            ],
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    icon: const Icon(
+                                        Icons.arrow_back_ios_new_outlined)),
+                              ]),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('category: ${_product.category}'),
+                                Text(_product.name),
+                                Text(_product.description),
+                                Text('\$${_product.price.toString()}'),
+                                Text('qty: ${_product.count.toString()}'),
+                              ],
+                            ),
                           ),
+                          OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateProductComponent(
+                                          user: _user,
+                                          product: _product,
+                                          jwt: _jwt,
+                                          socket: _socket,
+                                        )));
+                              },
+                              child: const Text('Update'))
                         ],
                       ),
                     )),
