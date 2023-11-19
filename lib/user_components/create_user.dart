@@ -96,35 +96,31 @@ class _CreateUserComponentState extends State<CreateUserComponent> {
   @override
   Widget build(BuildContext context) {
     return _error
-        ? Expanded(
-            child: Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    _response.toString(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          _error = false;
-                          _firstNameTextController.text = "";
-                          _lastNameTextController.text = "";
-                          _emailTextController.text = "";
-                          _passwordTextController.text = "";
-                          _confirmPasswordTextController.text = "";
-                          _selectedtype = "General";
-                          _response = {};
-                        });
-                      },
-                      child: const Text('Ok'))
-                ],
-              ),
+        ? SizedBox(
+            width: double.infinity,
+            child: Column(
+              children: [
+                Text(
+                  _message,
+                ),
+                Text(
+                  _response.toString(),
+                ),
+                OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        _error = false;
+                        _firstNameTextController.text = "";
+                        _lastNameTextController.text = "";
+                        _emailTextController.text = "";
+                        _passwordTextController.text = "";
+                        _confirmPasswordTextController.text = "";
+                        _selectedtype = "General";
+                        _response = {};
+                      });
+                    },
+                    child: const Text('Back'))
+              ],
             ),
           )
         : GestureDetector(

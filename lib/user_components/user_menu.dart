@@ -3,9 +3,7 @@ import 'package:glowing_octo_lamp/home.dart';
 import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
 import 'package:glowing_octo_lamp/user_components/read_all_users.dart';
 import 'package:glowing_octo_lamp/user_components/read_one_user.dart';
-import 'package:glowing_octo_lamp/auth/login.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
 import '../models/user_model.dart';
 
 class UserMenuComponent extends StatefulWidget {
@@ -53,7 +51,7 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                               socket: _socket,
                             )));
                   },
-                  icon: Icon(Icons.person_pin_rounded)),
+                  icon: const Icon(Icons.person_pin_rounded)),
             ),
             ElevatedButton.icon(
                 onPressed: () {
@@ -64,8 +62,8 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                             socket: _socket,
                           )));
                 },
-                icon: Icon(Icons.group),
-                label: Text('Users')),
+                icon: const Icon(Icons.group),
+                label: const Text('Users')),
             ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -75,8 +73,8 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                             socket: _socket,
                           )));
                 },
-                icon: Icon(Icons.shopping_bag_rounded),
-                label: Text('Products')),
+                icon: const Icon(Icons.shopping_bag_rounded),
+                label: const Text('Products')),
             ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -86,8 +84,8 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                             socket: _socket,
                           )));
                 },
-                icon: Icon(Icons.view_list_rounded),
-                label: Text('Orders')),
+                icon: const Icon(Icons.view_list_rounded),
+                label: const Text('Orders')),
             ElevatedButton.icon(
                 onPressed: () {
                   _socket.disconnect();
@@ -104,8 +102,8 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => Home(socket: _socket)));
                 },
-                icon: Icon(Icons.power_settings_new_rounded),
-                label: Text('Logout')),
+                icon: const Icon(Icons.power_settings_new_rounded),
+                label: const Text('Logout')),
           ],
         ),
       )),

@@ -40,14 +40,12 @@ class _DeleteUserComponentState extends State<DeleteUserComponent> {
 
   Future<void> deleteUser() async {
     try {
-      final resp = await api.deleteOne("users/", _jwt, _id, _socket);
-      print(resp.toString());
+      final resp = await api.deleteOne("users/$_id", _jwt, _socket);
       setState(() {
         _isProcessing = false;
       });
-      _socket.emit('user_deleted', {"message": "A user has been deleted."});
+      _socket.emit('user_deleted', resp);
     } catch (e) {
-      print(e.toString());
       setState(() {
         _isProcessing = false;
         _error = true;
@@ -66,9 +64,7 @@ class _DeleteUserComponentState extends State<DeleteUserComponent> {
                   AlertDialog(
                     title: const Text('ERROR'),
                     content: Column(
-                      children: [
-                        Text(_message),
-                      ],
+                      children: [Text(_message), Text(_response.toString())],
                     ),
                   );
                 },

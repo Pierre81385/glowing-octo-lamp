@@ -60,7 +60,7 @@ router.route("/:id").put(authenticateToken, async (req, res) => {
     category: product.category,
   });
   await Product.findByIdAndUpdate(
-    { _id: req.params.id },
+    { _id: newProduct.id },
     {
       $set: {
         name: newProduct.name,

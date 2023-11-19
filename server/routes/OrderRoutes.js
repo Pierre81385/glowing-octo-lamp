@@ -45,7 +45,7 @@ router.route("/:id").put(async (req, res) => {
   });
   await order
     .findByIdAndUpdate(
-      { _id: req.params.id },
+      { _id: newOrder.id },
       {
         $set: {
           placedBy: newOrder.placedBy,

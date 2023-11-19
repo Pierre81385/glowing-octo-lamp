@@ -1,19 +1,11 @@
-import 'dart:convert';
-import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
-import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import '../helpers/constants.dart';
-import '../models/user_model.dart';
+import '../models/api_model.dart';
 
 class DeleteProductComponent extends StatefulWidget {
   const DeleteProductComponent(
-      {super.key,
-      required this.id,
-      required this.user,
-      required this.jwt,
-      required this.socket});
-  final User user;
+      {super.key, required this.id, required this.jwt, required this.socket});
   final String jwt;
   final String id;
   final IO.Socket socket;
@@ -24,50 +16,31 @@ class DeleteProductComponent extends StatefulWidget {
 
 class _DeleteProductComponentState extends State<DeleteProductComponent> {
   late String _id;
-  late User _user;
   late String _jwt;
   late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
   String _message = "";
   Map<String, dynamic> _response = {};
+  final api =
+      ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
 
   @override
   void initState() {
-    _user = widget.user;
     _jwt = widget.jwt;
     _id = widget.id;
     _socket = widget.socket;
     super.initState();
   }
 
-  Future<void> getProductByIdandDelete(String id) async {
+  Future<void> deleteProduct() async {
     try {
-      await http.delete(
-        Uri.parse('${ApiConstants.baseUrl}${ApiConstants.port}/Products/$id'),
-        headers: {"Content-Type": "application/json"},
-      ).then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            _isProcessing = false;
-            _response = json.decode(response.body);
-          });
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => GetAllProductsComponent(
-                    user: _user,
-                    jwt: _jwt,
-                    socket: _socket,
-                  )));
-        } else {
-          setState(() {
-            _isProcessing = false;
-            _error = true;
-            _response = json.decode(response.body);
-          });
-          throw Exception('Failed to delete Product.');
-        }
+      final resp = await api.deleteOne("products/$_id", _jwt, _socket);
+      setState(() {
+        _isProcessing = false;
       });
-    } on Exception catch (e) {
+      _socket.emit('product_deleted', resp);
+    } catch (e) {
       setState(() {
         _isProcessing = false;
         _error = true;
@@ -79,19 +52,14 @@ class _DeleteProductComponentState extends State<DeleteProductComponent> {
   @override
   Widget build(BuildContext context) {
     return _isProcessing
-        ? CircularProgressIndicator()
+        ? const CircularProgressIndicator()
         : _error
             ? IconButton(
                 onPressed: () {
                   AlertDialog(
                     title: const Text('ERROR'),
                     content: Column(
-                      children: [
-                        const Text(
-                            'This Product cannot be deleted at this time.'),
-                        Text(_message),
-                        Text(_response.toString())
-                      ],
+                      children: [Text(_message), Text(_response.toString())],
                     ),
                   );
                 },
@@ -100,8 +68,9 @@ class _DeleteProductComponentState extends State<DeleteProductComponent> {
                 onPressed: () {
                   setState(() {
                     _isProcessing = true;
+                    _error = false;
                   });
-                  getProductByIdandDelete(_id);
+                  deleteProduct();
                 },
                 icon: const Icon(Icons.delete));
   }

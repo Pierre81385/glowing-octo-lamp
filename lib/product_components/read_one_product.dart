@@ -10,8 +10,8 @@ import '../models/api_model.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 
-class ProductDetailComponent extends StatefulWidget {
-  const ProductDetailComponent(
+class GetProductComponent extends StatefulWidget {
+  const GetProductComponent(
       {super.key,
       required this.id,
       required this.user,
@@ -23,10 +23,10 @@ class ProductDetailComponent extends StatefulWidget {
   final IO.Socket socket;
 
   @override
-  State<ProductDetailComponent> createState() => _ProductDetailComponentState();
+  State<GetProductComponent> createState() => _GetProductComponentState();
 }
 
-class _ProductDetailComponentState extends State<ProductDetailComponent> {
+class _GetProductComponentState extends State<GetProductComponent> {
   late String _id;
   late Product _product;
   late User _user;
@@ -72,76 +72,76 @@ class _ProductDetailComponentState extends State<ProductDetailComponent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _isProcessing
-            ? Column(
-                children: [
-                  const CircularProgressIndicator(),
-                  OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => GetAllProductsComponent(
-                                  user: _user,
-                                  jwt: _jwt,
-                                  socket: _socket,
-                                )));
-                      },
-                      child: const Text('Back'))
-                ],
-              )
-            : !_error
-                ? SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Text('category: ${_product.category}'),
-                            Text(_product.name),
-                            Text(_product.description),
-                            Text('\$${_product.price.toString()}'),
-                            Text('qty: ${_product.count.toString()}'),
-                            OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Back')),
-                            OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          UpdateProductComponent(
-                                            product: _product,
-                                            socket: _socket,
-                                          )));
-                                },
-                                child: const Text('Update'))
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                : SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                        Text(
-                          _message,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          _response.toString(),
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Back'))
-                      ],
-                    ),
-                  ),
-      ),
+          child: _isProcessing
+              ? Column(
+                  children: [
+                    const CircularProgressIndicator(),
+                    OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => GetAllProductsComponent(
+                                    user: _user,
+                                    jwt: _jwt,
+                                    socket: _socket,
+                                  )));
+                        },
+                        child: const Text('Back'))
+                  ],
+                )
+              : _error
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          Text(
+                            _message,
+                          ),
+                          Text(
+                            _response.toString(),
+                          ),
+                          OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Back'))
+                        ],
+                      ),
+                    )
+                  : SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              Text('category: ${_product.category}'),
+                              Text(_product.name),
+                              Text(_product.description),
+                              Text('\$${_product.price.toString()}'),
+                              Text('qty: ${_product.count.toString()}'),
+                              OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Back')),
+                              OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                UpdateProductComponent(
+                                                  user: _user,
+                                                  product: _product,
+                                                  jwt: _jwt,
+                                                  socket: _socket,
+                                                )));
+                                  },
+                                  child: const Text('Update'))
+                            ],
+                          ),
+                        ],
+                      ),
+                    )),
     );
   }
 }

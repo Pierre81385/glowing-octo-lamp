@@ -1,16 +1,23 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'package:glowing_octo_lamp/product_components/read_one_product.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../models/api_model.dart';
 import '../models/product_model.dart';
 import '../helpers/constants.dart';
 import '../helpers/validate.dart';
+import '../models/user_model.dart';
 
 class UpdateProductComponent extends StatefulWidget {
   const UpdateProductComponent(
-      {super.key, required this.product, required this.socket});
+      {super.key,
+      required this.user,
+      required this.product,
+      required this.jwt,
+      required this.socket});
+  final User user;
   final Product product;
+  final String jwt;
   final IO.Socket socket;
 
   @override
@@ -28,7 +35,11 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
   final _countTextController = TextEditingController();
   final _countFocusNode = FocusNode();
   final _categoryFocusNode = FocusNode();
+  final api =
+      ApiService(baseUrl: '${ApiConstants.baseUrl}${ApiConstants.port}');
+  late User _user;
   late Product _product;
+  late String _jwt;
   late IO.Socket _socket;
   bool _isProcessing = false;
   bool _error = false;
@@ -38,48 +49,40 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
   @override
   void initState() {
     super.initState();
+    _user = widget.user;
     _product = widget.product;
+    _jwt = widget.jwt;
     _socket = widget.socket;
   }
 
-  Future<void> UpdateProduct(String name, String description, double price,
-      int count, String category, String id) async {
+  Future<void> updateOneProduct(
+    Product product,
+  ) async {
     try {
-      await http
-          .put(
-              Uri.parse(
-                  '${ApiConstants.baseUrl}${ApiConstants.port}/products/$id'),
-              headers: {"Content-Type": "application/json"},
-              body: jsonEncode({
-                'name': name,
-                'description': description,
-                'price': price,
-                'count': count,
-                'category': category
-              }))
-          .then((response) {
-        if (response.statusCode == 200) {
-          setState(() {
-            _isProcessing = false;
-          });
-          _socket.emit(
-              'product_update_successful', {'message': 'update product!'});
-          Navigator.of(context).pop();
-        } else {
-          setState(() {
-            _isProcessing = false;
-            _error = true;
-          });
-          throw Exception('Failed to update product.');
-        }
-      });
-    } on Exception catch (e) {
+      final resp =
+          await api.update('products', _jwt, product.toJson(), _socket);
       setState(() {
         _isProcessing = false;
+      });
+      _socket.emit('product_update_successful', resp);
+      updateSuccess();
+    } on Exception catch (e) {
+      setState(() {
         _error = true;
         _message = e.toString();
+        _isProcessing = false;
       });
     }
+  }
+
+  void updateSuccess() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => GetProductComponent(
+              id: _product.id,
+              user: _user,
+              jwt: _jwt,
+              socket: _socket,
+            )));
   }
 
   List<DropdownMenuItem<String>> get dropdownItems {
@@ -117,8 +120,33 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: !_error
-              ? GestureDetector(
+          child: _error
+              ? SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Text(
+                        _message,
+                      ),
+                      Text(
+                        _response.toString(),
+                      ),
+                      OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _error = false;
+                              _nameTextController.text = "";
+                              _descriptionTextController.text = "";
+                              _priceTextController.text = "";
+                              _countTextController.text = "";
+                              _response = {};
+                            });
+                          },
+                          child: const Text('Back'))
+                    ],
+                  ),
+                )
+              : GestureDetector(
                   onTap: () {
                     _nameFocusNode.unfocus();
                     _descriptionFocusNode.unfocus();
@@ -175,8 +203,8 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
                             initialValue: _product.price.toString(),
                             //controller: _priceTextController,
                             focusNode: _priceFocusNode,
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                   RegExp('[0-9.,]'))
@@ -195,8 +223,8 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
                             initialValue: _product.count.toString(),
                             //controller: _countTextController,
                             focusNode: _countFocusNode,
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: false),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: false),
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                   RegExp('[0-9.,]'))
@@ -258,14 +286,7 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
                                               setState(() {
                                                 _isProcessing = true;
                                               });
-
-                                              await UpdateProduct(
-                                                  _product.name,
-                                                  _product.description,
-                                                  _product.price,
-                                                  _product.count,
-                                                  _product.category,
-                                                  _product.id);
+                                              await updateOneProduct(_product);
                                             }
                                           },
                                           child: const Text(
@@ -280,43 +301,7 @@ class _UpdateProductComponentState extends State<UpdateProductComponent> {
                       ),
                     ),
                   ),
-                )
-              : !_error
-                  ? Column(
-                      children: [
-                        Text(_response.toString()),
-                        const Text('SUCCESS'),
-                        OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _error = false;
-                                _nameTextController.text = "";
-                                _descriptionTextController.text = "";
-                                _priceTextController.text = "";
-                                _countTextController.text = "";
-                                _response = {};
-                              });
-                            },
-                            child: const Text('Ok'))
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        Text(
-                          _message,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          _response.toString(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Back'))
-                      ],
-                    )),
+                )),
     );
   }
 }

@@ -100,8 +100,28 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: !_error
-              ? GestureDetector(
+          child: _error
+              ? SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Text(_message),
+                      Text(_response.toString()),
+                      OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _error = false;
+                              _firstNameTextController.text = "";
+                              _lastNameTextController.text = "";
+                              _emailTextController.text = "";
+                              _response = {};
+                            });
+                          },
+                          child: const Text('Ok'))
+                    ],
+                  ),
+                )
+              : GestureDetector(
                   onTap: () {
                     _firstNameFocusNode.unfocus();
                     _lastNameFocusNode.unfocus();
@@ -224,42 +244,7 @@ class _UpdateUserComponentState extends State<UpdateUserComponent> {
                       ),
                     ),
                   ),
-                )
-              : !_error
-                  ? Column(
-                      children: [
-                        Text(_response.toString()),
-                        const Text('SUCCESS'),
-                        OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _error = false;
-                                _firstNameTextController.text = "";
-                                _lastNameTextController.text = "";
-                                _emailTextController.text = "";
-                                _response = {};
-                              });
-                            },
-                            child: const Text('Ok'))
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        Text(
-                          _message,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          _response.toString(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Back'))
-                      ],
-                    )),
+                )),
     );
   }
 }

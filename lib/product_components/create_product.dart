@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
@@ -118,30 +116,33 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
     return Scaffold(
         body: SafeArea(
       child: _error
-          ? Column(
-              children: [
-                Text(
-                  _message,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                Text(
-                  _response.toString(),
-                  style: const TextStyle(color: Colors.white),
-                ),
-                OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _error = false;
-                        _nameTextController.text = "";
-                        _descriptionTextController.text = "";
-                        _priceTextController.text = "";
-                        _countTextController.text = "";
-                        _selectedtype = "Training";
-                        _response = {};
-                      });
-                    },
-                    child: const Text('Ok'))
-              ],
+          ? SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Text(
+                    _message,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    _response.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          _error = false;
+                          _nameTextController.text = "";
+                          _descriptionTextController.text = "";
+                          _priceTextController.text = "";
+                          _countTextController.text = "";
+                          _selectedtype = "Training";
+                          _response = {};
+                        });
+                      },
+                      child: const Text('Ok'))
+                ],
+              ),
             )
           : GestureDetector(
               onTap: () {

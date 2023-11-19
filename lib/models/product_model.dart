@@ -14,7 +14,7 @@ class Product {
       required this.count,
       required this.category});
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,

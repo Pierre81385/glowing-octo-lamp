@@ -68,11 +68,14 @@ class ApiService {
 
   Future<Map<String, dynamic>> update(String endpoint, String auth,
       Map<String, dynamic> data, IO.Socket socket) async {
+    print('request URI: $baseUrl/$endpoint/${data['_id']}');
     final response = await http.put(
       Uri.parse('$baseUrl/$endpoint/${data['_id']}'),
       headers: {"Authorization": auth, "Content-Type": "application/json"},
       body: json.encode(data),
     );
+    print('Status: ${response.statusCode}');
+    print('Response: ${response.body}');
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
@@ -81,9 +84,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> deleteOne(
-      String endpoint, String auth, String param, IO.Socket socket) async {
+      String endpoint, String auth, IO.Socket socket) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/$endpoint/$param'),
+      Uri.parse('$baseUrl/$endpoint'),
       headers: {"Authorization": auth, "Content-Type": "application/json"},
     );
 

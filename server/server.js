@@ -54,6 +54,12 @@ io.on("connection", (socket) => {
     io.emit("update_product_list", data);
   });
 
+  //notify update required to product lists
+  socket.on("product_deleted", function (data) {
+    console.log(data.message);
+    io.emit("update_product_list", data);
+  });
+
   //notifiy update required to users lists
   socket.on("user_update_successful", function (data) {
     console.log(data.message);

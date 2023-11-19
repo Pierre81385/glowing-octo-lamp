@@ -68,9 +68,34 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
     return Scaffold(
       body: SafeArea(
         child: _isProcessing
-            ? const CircularProgressIndicator()
-            : !_error
-                ? Column(
+            ? Column(
+                children: [
+                  const CircularProgressIndicator(),
+                  OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Back'))
+                ],
+              )
+            : _error
+                ? SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      children: [
+                        Text(
+                          _message,
+                        ),
+                        Text(_response.toString()),
+                        OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Back'))
+                      ],
+                    ),
+                  )
+                : Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -111,18 +136,6 @@ class _GetAllUsersComponentState extends State<GetAllUsersComponent> {
                                     );
                             }),
                       ),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      Text(
-                        _message,
-                      ),
-                      OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Back'))
                     ],
                   ),
       ),

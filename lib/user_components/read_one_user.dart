@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glowing_octo_lamp/user_components/update_user.dart';
-import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../models/api_model.dart';
 import '../models/user_model.dart';
 import '../helpers/constants.dart';
-import 'user_menu.dart';
 
 class GetUserComponent extends StatefulWidget {
   const GetUserComponent(
@@ -62,73 +59,70 @@ class _GetUserComponentState extends State<GetUserComponent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _isProcessing
-            ? Column(
-                children: [
-                  const CircularProgressIndicator(),
-                  OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Back'))
-                ],
-              )
-            : !_error
-                ? SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Text('${_user.firstName} ${_user.lastName}'),
-                            Text(_user.email),
-                            Text('Permission level: ${_user.type}'),
-                            OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Back')),
-                            _user.type == "Limited"
-                                ? const SizedBox()
-                                : OutlinedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  UpdateUserComponent(
-                                                    user: _user,
-                                                    jwt: _jwt,
-                                                    socket: _socket,
-                                                  )));
-                                    },
-                                    child: const Text('Update'))
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                : SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                        Text(
-                          _message,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          _response.toString(),
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        OutlinedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Back'))
-                      ],
-                    ),
-                  ),
-      ),
+          child: _isProcessing
+              ? Column(
+                  children: [
+                    const CircularProgressIndicator(),
+                    OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Back'))
+                  ],
+                )
+              : _error
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          Text(
+                            _message,
+                          ),
+                          Text(
+                            _response.toString(),
+                          ),
+                          OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Back'))
+                        ],
+                      ),
+                    )
+                  : SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              Text('${_user.firstName} ${_user.lastName}'),
+                              Text(_user.email),
+                              Text('Permission level: ${_user.type}'),
+                              OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Back')),
+                              _user.type == "Limited"
+                                  ? const SizedBox()
+                                  : OutlinedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpdateUserComponent(
+                                                      user: _user,
+                                                      jwt: _jwt,
+                                                      socket: _socket,
+                                                    )));
+                                      },
+                                      child: const Text('Update'))
+                            ],
+                          ),
+                        ],
+                      ),
+                    )),
     );
   }
 }
