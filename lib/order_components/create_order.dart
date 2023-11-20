@@ -32,8 +32,9 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
   String _objectMessage = "";
   List<Product> _responseList = [];
   Map<String, dynamic> _responseObject = {};
-  List<Map<String, dynamic>> _cart = [];
-  List<Map<String, dynamic>> _finalCart = [];
+  List<Product> _cart = [];
+  List<Product> _finalCart = [];
+  double _finalTotal = 0.0;
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   final List<String> orderStatusOptions = [
     'sent',
@@ -150,38 +151,43 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
           ),
           ListView.builder(
               shrinkWrap: true,
-              itemCount: _cart.length,
+              itemCount: _responseList.length,
               itemBuilder: (BuildContext context, int index) {
-                return _cart[index]['count'] == 0
+                return _responseList[index].count == 0
                     ? const SizedBox()
                     : ListTile(
                         leading: IconButton(
                           onPressed: () {
                             setState(() {
-                              _cart[index]['count']--;
+                              _responseList[index].count--;
+                              _finalTotal =
+                                  _finalTotal - _responseList[index].price;
                             });
                           },
                           icon: Icon(Icons.arrow_drop_down),
                         ),
                         title: Text(_responseList[index].name),
-                        subtitle: Text(_cart[index]['count'].toString()),
+                        subtitle: Text(_responseList[index].count.toString()),
                         trailing: IconButton(
                           onPressed: () {
                             setState(() {
-                              _cart[index]['count']++;
+                              _responseList[index].count++;
+                              _finalTotal =
+                                  _finalTotal + _responseList[index].price;
                             });
                           },
                           icon: Icon(Icons.arrow_drop_up),
                         ),
                       );
               }),
+          Text('Total: ${_finalTotal}'),
           OutlinedButton(
               onPressed: () {
                 setState(() {
                   _isProcessing = true;
-                  for (var i = 0; i < _cart.length; i++) {
-                    if (_cart[i]['count'] > 0) {
-                      _finalCart.add(_cart[i]);
+                  for (var i = 0; i < _responseList.length; i++) {
+                    if (_responseList[i].count > 0) {
+                      _finalCart.add(_responseList[i]);
                     }
                   }
                 });
@@ -264,13 +270,6 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
                             shrinkWrap: true,
                             itemCount: _responseList.length,
                             itemBuilder: (BuildContext context, int index) {
-                              for (var i = 0; i < _responseList.length; i++) {
-                                _cart.add({
-                                  "id": _responseList[index].id,
-                                  "count": 0
-                                });
-                              }
-                              Product product = _responseList[index];
                               return SizedBox(
                                 width: width,
                                 child: ListTile(
@@ -278,39 +277,46 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
                                       setState(() {});
                                     },
                                     isThreeLine: true,
-                                    leading: IconButton.filled(
-                                      icon: Icon(Icons.arrow_drop_down,
-                                          color: Colors.white),
-                                      onPressed: () {
-                                        setState(() {
-                                          _cart[index]['count']--;
-                                        });
-                                      },
-                                    ),
+                                    leading: _responseList[index].count == 0
+                                        ? SizedBox()
+                                        : IconButton.filled(
+                                            icon: Icon(Icons.arrow_drop_down,
+                                                color: Colors.white),
+                                            onPressed: () {
+                                              setState(() {
+                                                _responseList[index].count--;
+                                                _finalTotal = _finalTotal -
+                                                    _responseList[index].price;
+                                              });
+                                            },
+                                          ),
                                     title: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(product.name),
+                                        Text(_responseList[index].name),
                                         Row(
                                           children: [
                                             Text(
-                                                '\$${product.price.toString()}'),
-                                            _cart[index]['count'] > 0
+                                                '\$${_responseList[index].price.toString()}'),
+                                            _responseList[index].count > 0
                                                 ? Text(
-                                                    ' x ${_cart[index]['count'].toString()}')
+                                                    ' x ${_responseList[index].count.toString()}')
                                                 : SizedBox()
                                           ],
                                         )
                                       ],
                                     ),
-                                    subtitle: Text(product.description),
+                                    subtitle:
+                                        Text(_responseList[index].description),
                                     trailing: IconButton.filled(
                                       icon: Icon(Icons.arrow_drop_up,
                                           color: Colors.white),
                                       onPressed: () {
                                         setState(() {
-                                          _cart[index]['count']++;
+                                          _responseList[index].count++;
+                                          _finalTotal = _finalTotal +
+                                              _responseList[index].price;
                                         });
                                       },
                                     )),

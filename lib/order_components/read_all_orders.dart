@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:glowing_octo_lamp/product_components/create_product.dart';
-import 'package:glowing_octo_lamp/product_components/delete_product.dart';
-import 'package:glowing_octo_lamp/product_components/read_one_product.dart';
+import 'package:glowing_octo_lamp/order_components/read_one_order.dart';
 import 'package:glowing_octo_lamp/user_components/user_menu.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../helpers/constants.dart';
 import '../models/api_model.dart';
 import '../models/order_model.dart';
-import '../models/product_model.dart';
 import '../models/user_model.dart';
 import 'create_order.dart';
+import 'delete_order.dart';
 
 class GetAllOrdersComponent extends StatefulWidget {
   const GetAllOrdersComponent(
@@ -144,15 +142,15 @@ class _GetAllOrdersComponentState extends State<GetAllOrdersComponent> {
 
                               return ListTile(
                                   onTap: () {
-                                    // Navigator.of(context).push(
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) =>
-                                    //             GetProductComponent(
-                                    //               id: product.id,
-                                    //               user: _user,
-                                    //               jwt: _jwt,
-                                    //               socket: _socket,
-                                    //             )));
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                GetOrderComponent(
+                                                  id: order.id,
+                                                  user: _user,
+                                                  jwt: _jwt,
+                                                  socket: _socket,
+                                                )));
                                   },
                                   isThreeLine: true,
                                   leading: Column(
@@ -168,12 +166,11 @@ class _GetAllOrdersComponentState extends State<GetAllOrdersComponent> {
                                   title: Text(order.placedBy),
                                   subtitle: Text(
                                       'Order Number: ${order.orderNumber}'),
-                                  trailing: Text('Cancel Order')
-                                  // DeleteProductComponent(
-                                  //   id: order.id,
-                                  //   jwt: _jwt,
-                                  //   socket: _socket,
-                                  // ) //delete component here,
+                                  trailing: DeleteOrderComponent(
+                                    id: order.id,
+                                    jwt: _jwt,
+                                    socket: _socket,
+                                  ) //delete component here,
                                   );
                             }),
                       ),

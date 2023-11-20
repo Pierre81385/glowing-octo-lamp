@@ -1,23 +1,37 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const productSchema = new Schema({
+  name: {
+    type: String,
+    required: [true, "Product name is required."],
+    unique: true,
+    trim: true,
+  },
+  description: {
+    type: String,
+    required: [true, "Product description is required."],
+  },
+  price: {
+    type: Number,
+    required: [true, "Product price is required."],
+  },
+  count: {
+    type: Number,
+    required: [true, "Product count is required."],
+  },
+  category: {
+    type: String,
+    required: [true, "Please specify product category."],
+  },
+});
+
 const orderSchema = new Schema({
   placedBy: {
     type: String,
     required: [true, "User ID is required for this field."],
   },
-  orderItems: {
-    type: [
-      {
-        id: {
-          type: String,
-        },
-        count: {
-          type: Number,
-        },
-      },
-    ],
-  },
+  orderItems: [productSchema],
   orderNumber: {
     type: String,
     required: [true, "Shuffled order number must be generated."],
