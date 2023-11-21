@@ -72,6 +72,12 @@ io.on("connection", (socket) => {
     io.emit("update_users_list", data);
   });
 
+  //notifiy update required to users lists
+  socket.on("order_deleted", function (data) {
+    console.log(data.message);
+    io.emit("update_orders_list", data);
+  });
+
   io.on("disconnect", (data) => {
     console.log("user disconnected");
   });
