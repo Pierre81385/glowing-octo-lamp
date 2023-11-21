@@ -7,7 +7,7 @@ import 'product_model.dart';
 class Order {
   final String id;
   late String placedBy;
-  late List<Product> orderItems;
+  late List<Map<String, dynamic>> orderItems;
   late String orderNumber;
   late String orderStatus;
 
@@ -32,8 +32,8 @@ class Order {
     return Order(
         id: order['_id'],
         placedBy: order['placedBy'],
-        orderItems: order['orderItems']
-            .map((product) => Product.fromJson(product))
+        orderItems: (order['orderItems'] as List<dynamic>)
+            .map((item) => item as Map<String, dynamic>)
             .toList(),
         orderNumber: order['orderNumber'],
         orderStatus: order['orderStatus']);

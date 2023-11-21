@@ -27,8 +27,6 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
   final _descriptionFocusNode = FocusNode();
   final _priceTextController = TextEditingController();
   final _priceFocusNode = FocusNode();
-  final _countTextController = TextEditingController();
-  final _countFocusNode = FocusNode();
   final _categoryFocusNode = FocusNode();
   late User _user;
   late Product _product;
@@ -135,7 +133,6 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
                           _nameTextController.text = "";
                           _descriptionTextController.text = "";
                           _priceTextController.text = "";
-                          _countTextController.text = "";
                           _selectedtype = "Training";
                           _response = {};
                         });
@@ -149,7 +146,6 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
                 _nameFocusNode.unfocus();
                 _descriptionFocusNode.unfocus();
                 _priceFocusNode.unfocus();
-                _countFocusNode.unfocus();
                 _categoryFocusNode.unfocus();
               },
               child: Padding(
@@ -220,23 +216,6 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
                                 labelStyle: TextStyle(),
                               ),
                             ),
-                            TextFormField(
-                              autocorrect: false,
-                              controller: _countTextController,
-                              focusNode: _countFocusNode,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: false),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp('[0-9.,]'))
-                              ],
-                              style: const TextStyle(),
-                              decoration: const InputDecoration(
-                                labelText: "Count (numbers only)",
-                                labelStyle: TextStyle(),
-                              ),
-                            ),
                             DropdownButtonFormField(
                               value: _selectedtype,
                               items: dropdownItems,
@@ -264,13 +243,11 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
                                     _nameFocusNode.unfocus();
                                     _descriptionFocusNode.unfocus();
                                     _priceFocusNode.unfocus();
-                                    _countFocusNode.unfocus();
                                     _categoryFocusNode.unfocus();
                                     double priceDouble = double.tryParse(
                                             _priceTextController.text) ??
                                         0.0;
-                                    int countInt =
-                                        int.parse(_countTextController.text);
+
                                     if (_createProductFormKey.currentState!
                                         .validate()) {
                                       setState(() {
@@ -281,7 +258,7 @@ class _CreateProductComponentState extends State<CreateProductComponent> {
                                         "description":
                                             _descriptionTextController.text,
                                         "price": priceDouble,
-                                        "count": countInt,
+                                        "count": 0,
                                         "category": _selectedtype
                                       });
                                     }

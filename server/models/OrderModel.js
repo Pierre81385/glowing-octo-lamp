@@ -31,7 +31,31 @@ const orderSchema = new Schema({
     type: String,
     required: [true, "User ID is required for this field."],
   },
-  orderItems: [productSchema],
+  orderItems: [
+    {
+      name: {
+        type: String,
+        required: [true, "Product name is required."],
+        trim: true,
+      },
+      description: {
+        type: String,
+        required: [true, "Product description is required."],
+      },
+      price: {
+        type: Number,
+        required: [true, "Product price is required."],
+      },
+      count: {
+        type: Number,
+        required: [true, "Product count is required."],
+      },
+      category: {
+        type: String,
+        required: [true, "Please specify product category."],
+      },
+    },
+  ],
   orderNumber: {
     type: String,
     required: [true, "Shuffled order number must be generated."],

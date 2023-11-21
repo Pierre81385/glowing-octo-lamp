@@ -162,9 +162,11 @@ class _GetOrderComponentState extends State<GetOrderComponent> {
                                     itemCount: _order.orderItems.length,
                                     itemBuilder:
                                         (BuildContext context, int index) {
-                                      Product item = _order.orderItems[index];
+                                      Product item = Product.fromJson(
+                                          _order.orderItems[index]);
 
-                                      _totalPrice = item.price + _totalPrice;
+                                      _totalPrice = (item.price * item.count) +
+                                          _totalPrice;
                                       return ListTile(
                                         title: Text(item.name),
                                         subtitle: Text(item.description),
@@ -176,7 +178,7 @@ class _GetOrderComponentState extends State<GetOrderComponent> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Row(
+                            child: Column(
                               children: [
                                 _order.orderItems.length == 1
                                     ? Text('1 item ordered.')

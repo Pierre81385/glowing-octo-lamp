@@ -4,7 +4,7 @@ const Order = require("../models/OrderModel");
 //create new product
 router.route("/create").post(async (req, res) => {
   const order = req.body;
-
+  console.log(order);
   const newOrder = new Order({
     placedBy: order.placedBy,
     orderItems: order.orderItems,
@@ -14,6 +14,8 @@ router.route("/create").post(async (req, res) => {
   newOrder
     .save()
     .then(() => {
+      console.log(res.status.toString());
+      console.log(res.toString());
       res.status(200).json({ message: "Order sent!", order: newOrder });
     })
     .catch((error) => res.status(400).json({ message: error }));

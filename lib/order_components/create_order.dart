@@ -34,6 +34,7 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
   Map<String, dynamic> _responseObject = {};
   List<Product> _cart = [];
   List<Product> _finalCart = [];
+  List<Map<String, dynamic>> _finalConverted = [];
   double _finalTotal = 0.0;
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   final List<String> orderStatusOptions = [
@@ -190,10 +191,13 @@ class _CreateOrderComponentState extends State<CreateOrderComponent> {
                       _finalCart.add(_responseList[i]);
                     }
                   }
+                  _finalConverted =
+                      _finalCart.map((prod) => prod.toJson()).toList();
+                  print(_finalConverted.toString() + "final");
                 });
                 createOrder({
                   'placedBy': _user.email,
-                  'orderItems': _finalCart,
+                  'orderItems': _finalConverted,
                   'orderNumber': generateShuffledString(combinedList, 10),
                   'orderStatus': orderStatusOptions[0]
                 });

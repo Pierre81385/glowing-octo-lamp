@@ -46,7 +46,6 @@ class _GetAllOrdersComponentState extends State<GetAllOrdersComponent> {
   Future<void> getAllOrders() async {
     try {
       final resp = await api.getAll("orders/", _jwt, _socket);
-      print(resp);
       final parsed = (resp['orders'] as List).cast<Map<String, dynamic>>();
       final map = parsed.map<Order>((json) => Order.fromJson(json)).toList();
       setState(() {

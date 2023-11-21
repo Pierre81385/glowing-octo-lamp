@@ -41,7 +41,7 @@ class ApiService {
       headers: {"Content-Type": "application/json"},
       body: json.encode(data),
     );
-
+    print('status returned is ${response.statusCode}');
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
