@@ -154,8 +154,6 @@ class _GetAllProductsComponentState extends State<GetAllProductsComponent> {
                                                 )));
                                   },
                                   isThreeLine: true,
-                                  leading:
-                                      Text('qty: ${product.count.toString()}'),
                                   title: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
