@@ -32,3 +32,9 @@
 
 - Orders generate unique order numbers from suffled arrays of uppercase, lowercase, and numerical characters to 10 digitis.
 - Orders record lists of Products, while the quantity ordered is maintained in each Product object
+
+![orderQR](https://github.com/Pierre81385/glowing-octo-lamp/blob/main/assets/qr.png?raw=true)
+
+- Orders generate a QR code for the customer to scan
+  - currently this sends the user to the raw data of the order
+  - QR code should take the user to payment processing
