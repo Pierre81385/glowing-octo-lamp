@@ -6,6 +6,7 @@ import '../models/order_model.dart';
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 import 'read_all_orders.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class GetOrderComponent extends StatefulWidget {
   const GetOrderComponent(
@@ -33,6 +34,7 @@ class _GetOrderComponentState extends State<GetOrderComponent> {
   bool _error = false;
   String _message = "";
   double _totalPrice = 0.0;
+  String _qrData = "";
   Map<String, dynamic> _response = {};
   List<Product> _productResponse = [];
 
@@ -148,6 +150,12 @@ class _GetOrderComponentState extends State<GetOrderComponent> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                QrImageView(
+                                  data: ApiConstants.baseUrl +
+                                      'orders/${_order.id}',
+                                  version: QrVersions.auto,
+                                  size: 200.0,
+                                ),
                                 Text(
                                   'Order Number: ${_order.orderNumber}',
                                   style: TextStyle(fontWeight: FontWeight.bold),
