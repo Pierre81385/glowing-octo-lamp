@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:glowing_octo_lamp/aws_components/rekognition.dart';
+import 'package:glowing_octo_lamp/aws_components/s3.dart';
+import 'package:glowing_octo_lamp/helpers/test.dart';
 import 'package:glowing_octo_lamp/home.dart';
 import 'package:glowing_octo_lamp/order_components/read_all_orders.dart';
 import 'package:glowing_octo_lamp/product_components/read_all_products.dart';
@@ -55,28 +58,32 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                   },
                   icon: const Icon(Icons.person_pin_rounded)),
             ),
-            ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => GetAllUsersComponent(
-                            user: _user,
-                            jwt: _jwt,
-                            socket: _socket,
-                          )));
-                },
-                icon: const Icon(Icons.group),
-                label: const Text('Users')),
-            ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => GetAllProductsComponent(
-                            user: _user,
-                            jwt: _jwt,
-                            socket: _socket,
-                          )));
-                },
-                icon: const Icon(Icons.shopping_bag_rounded),
-                label: const Text('Products')),
+            _user.type == 'Admin' || _user.type == 'General'
+                ? ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => GetAllUsersComponent(
+                                user: _user,
+                                jwt: _jwt,
+                                socket: _socket,
+                              )));
+                    },
+                    icon: const Icon(Icons.group),
+                    label: const Text('Users'))
+                : SizedBox(),
+            _user.type == 'Admin'
+                ? ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => GetAllProductsComponent(
+                                user: _user,
+                                jwt: _jwt,
+                                socket: _socket,
+                              )));
+                    },
+                    icon: const Icon(Icons.shopping_bag_rounded),
+                    label: const Text('Products'))
+                : SizedBox(),
             ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -88,6 +95,13 @@ class _UserMenuComponentState extends State<UserMenuComponent> {
                 },
                 icon: const Icon(Icons.view_list_rounded),
                 label: const Text('Orders')),
+            ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => RekognitionComponent()));
+                },
+                icon: const Icon(Icons.qr_code_scanner_rounded),
+                label: const Text('Scan')),
             ElevatedButton.icon(
                 onPressed: () {
                   _socket.disconnect();

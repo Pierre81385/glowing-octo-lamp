@@ -96,4 +96,32 @@ class ApiService {
       throw Exception('Failed to delete data');
     }
   }
+
+  Future<Map<String, dynamic>> getS3(String endpoint) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/$endpoint/'),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to read data');
+    }
+  }
+
+  Future<Map<String, dynamic>> postRekognition(
+      String endpoint, Map<String, dynamic> data) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to read data');
+    }
+  }
 }
